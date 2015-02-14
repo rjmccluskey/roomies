@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  resources :users
+  get 'users/venmo_oauth' => 'users#venmo_oauth', as: :venmo_oauth
 
+  resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
