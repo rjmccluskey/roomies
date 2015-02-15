@@ -1,5 +1,5 @@
 module Venmo
-  class ClientOauth
+  class Oauth
     include HTTParty
 
     base_uri "https://api.venmo.com/v1"

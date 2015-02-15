@@ -12,7 +12,6 @@ RSpec.describe User, :type => :model do
   it {should have_db_column :access_token}
   it {should have_db_column :refresh_token}
 
-  it {should validate_presence_of :nickname}
   it {should validate_presence_of :first_name}
   it {should validate_presence_of :last_name}
   it {should validate_presence_of :display_name}
@@ -26,5 +25,5 @@ RSpec.describe User, :type => :model do
   it {should validate_uniqueness_of(:email).case_insensitive}
   it {should validate_uniqueness_of(:venmo_id).case_insensitive}
 
-  it {should ensure_length_of(:nickname).is_at_least(2).is_at_most(20)}
+  it {should ensure_length_of(:nickname).is_at_most(20)}
 end
