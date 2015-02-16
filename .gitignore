@@ -5,12 +5,12 @@
 #   git config --global core.excludesfile '~/.gitignore_global'
 
 # Ignore bundler config.
-/.bundle
+/server/.bundle
 
 # Ignore all logfiles and tempfiles.
-/log/*
-!/log/.keep
-/tmp
+/server/log/*
+!/server/log/.keep
+/server/tmp
 
 # Ignore hidden keys
-.env
+/server/.env
