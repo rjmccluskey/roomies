@@ -3,18 +3,26 @@ class UsersController < ApplicationController
 
   def venmo_oauth
     venmo = Venmo::Oauth.new(permit_params[:code])
-    user_info = venmo.oauth
-    user = User.new
+    venmo_info = venmo.oauth
+    user_info = venmo_info["user"]
+    user = User.find_by(venmo_id: user_info["id"])
 
-    # rename "id" to "venmo_id" so that it doesn't conflict with User
-    user_info["user"]["venmo_id"] = user_info["user"]["id"]
-    user_info["user"].delete("id")
+    unless user
+      user = User.new
 
-    add_attributes(user,user_info)
-    add_attributes(user,user_info["user"])
-    user.save
-    p user
-    render json: user_info
+      # rename "id" to "venmo_id" so that it doesn't conflict with User
+      user_info["venmo_id"] = user_info["id"]
+      user_info.delete("id")
+
+      add_attributes(user,venmo_info)
+      add_attributes(user,user_info)
+      user.save
+    end
+
+    session[:user_id] = user.venmo_id
+    session[:access_token] = user.access_token
+
+    render html: "venmo_id: #{session[:user_id]}   access_token: #{session[:access_token]}"
   end
 
   private
