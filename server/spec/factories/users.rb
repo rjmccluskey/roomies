@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :roomie do
+  factory :user do
     nickname {Faker::Name.first_name}
     first_name {Faker::Name.first_name}
     last_name {Faker::Name.last_name}
