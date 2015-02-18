@@ -1,13 +1,15 @@
 class UsersController < ApplicationController
   before_filter :cors_set_access_control_headers
 
-  def venmo_oauth
+  def create
     venmo = Venmo::Oauth.new(permit_params[:code])
     venmo_info = venmo.oauth
     user_info = venmo_info["user"]
     user = User.find_by(venmo_id: user_info["id"])
 
-    unless user
+    if user
+      user.update_attributes(access_token: venmo_info["access_token"], refresh_token: venmo_info["refresh_token"])
+    else
       user = User.new
 
       # rename "id" to "venmo_id" so that it doesn't conflict with User
@@ -19,10 +21,16 @@ class UsersController < ApplicationController
       user.save
     end
 
-    session[:user_id] = user.venmo_id
-    session[:access_token] = user.access_token
+    render json: {user_id: user.venmo_id, access_token: user.access_token}
+  end
 
-    render html: "venmo_id: #{session[:user_id]}   access_token: #{session[:access_token]}"
+  def show
+    user = User.find_by(venmo_id: permit_params[:id])
+    if user
+      render json: user
+    else
+      render json: {error: "User not found"}
+    end
   end
 
   private

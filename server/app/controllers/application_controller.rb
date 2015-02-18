@@ -7,6 +7,6 @@ class ApplicationController < ActionController::API
   end
 
   def permit_params
-    params.permit(:code)
+    params.permit(:code, :id)
   end
 end

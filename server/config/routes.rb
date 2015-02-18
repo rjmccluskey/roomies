@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  get 'users/venmo_oauth' => 'users#venmo_oauth', as: :venmo_oauth
 
   resources :users
 

@@ -12,3 +12,5 @@
 /server/.env
 
 # CLIENT
+/client/node_modules/
+/client/.env

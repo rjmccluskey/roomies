@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  ul
+    for item in user
+      li= item
+
+  a(href="/users/logout") Logout
