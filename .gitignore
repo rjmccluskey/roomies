@@ -4,6 +4,10 @@
 /server/.bundle
 
 # Ignore all logfiles and tempfiles.
+/log/*
+!/log/.keep
+/tmp/
+
 /server/log/*
 !/server/log/.keep
 /server/tmp
