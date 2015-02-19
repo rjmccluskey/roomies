@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1 Find friends and join their house!
+
+  form(action="/search" method="GET")
+    input(type="text" placeholder="Search users by name, email, or phone" name="search")
+    input(type="submit" value="Search")
+
+  if messages.error
+    p= messages.error
+
+  if users
+    ul
+    for user in users
+      li
+        a(href="/users/#{user.venmo_id}")
+          img(src="#{user.profile_picture_url}")
+          p= user.first_name

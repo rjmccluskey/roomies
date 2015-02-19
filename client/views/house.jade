@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  if house
+    h1 Welcome to the #{house.name} house!
+    p #{users.length} roomies belong to this house
+    ul
+      for user in users
+        li
+          img(src="#{user.profile_picture_url}")
+          p= user.first_name
+
+    if not_a_member
+      h3 Join this house:
+      form(action="/houses/#{house.id}/join?_method=PATCH" method="POST")
+        input(type="password" placeholder="password" name="password")
+        input(type="submit" value="join")
+
+    if messages.errors
+      p= messages.errors
+
+  a(href="/") Back

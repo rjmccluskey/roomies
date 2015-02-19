@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  h3 Hello #{user.first_name}
+
+  if houses.length > 0
+    h3 Your houses:
+    ul
+      for house in houses
+        li
+          a(href="/houses/#{house.id}")= house.name
+  else
+    p You don't belong to any houses yet!
+
+  a(href="/search_form") Search users
+
+  form(action='/houses' method='POST')
+    h3 Create a new house!
+    input(type="text" placeholder="House name" name="name")
+    input(type="password" placeholder="password" name="password")
+    input(type="password" placeholder="confirm password" name="password_confirmation")
+    input(type="submit" value="Create")
+
+  if messages.errors
+    ul
+      for errors in messages.errors
+        for error in errors
+          li= error
+
+  if messages.success
+    p= messages.success
+
+  a(href="/logout") Logout

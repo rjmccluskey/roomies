@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
 
-  resources :users
+  get 'users/search' => 'users#search'
+  resources :users, only: [:create, :show]
+
+  resources :houses, only: [:create, :show] do
+    member do
+      patch 'join'
+    end
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
