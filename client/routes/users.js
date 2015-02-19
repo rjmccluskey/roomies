@@ -10,7 +10,7 @@ router.get('/venmo_oauth', function(req, res) {
       .post('http://localhost:3000/users',
         { data: {'code': code} })
       .on('complete', function(data) {
-        req.session.user_id = data.user_id;
+        req.session.venmo_id = data.venmo_id;
         req.session.access_token = data.access_token;
         res.redirect('/');
       });
@@ -21,9 +21,9 @@ router.get('/venmo_oauth', function(req, res) {
 });
 
 router.get('/logout', function(req, res) {
-  req.session.user_id = '';
+  req.session.venmo_id = '';
   req.session.access_token = '';
   res.redirect('/');
-})
+});
 
 module.exports = router;

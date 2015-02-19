@@ -3,14 +3,14 @@ var router = express.Router();
 var rest = require('restler')
 
 router.get('/', function(req, res) {
-  user_id = req.session.user_id
+  venmo_id = req.session.venmo_id
 
-  if (user_id) {
+  if (venmo_id) {
     rest
-      .get('http://localhost:3000/users/' + user_id)
+      .get('http://localhost:3000/users/' + venmo_id)
       .on('complete', function(data) {
         if (data.error === 'User not found') {
-          req.session.user_id = '';
+          req.session.venmo_id = '';
           req.session.access_token = '';
           res.redirect('/');
         }

@@ -21,7 +21,7 @@ class UsersController < ApplicationController
       user.save
     end
 
-    render json: {user_id: user.venmo_id, access_token: user.access_token}
+    render json: {venmo_id: user.venmo_id, access_token: user.access_token}
   end
 
   def show
@@ -37,6 +37,10 @@ class UsersController < ApplicationController
 
   def add_attributes(object, args)
     object.attributes = args.reject {|k,v| !object.attributes.keys.member?(k.to_s)}
+  end
+
+  def permit_params
+    params.permit(:code, :id)
   end
 
 end
