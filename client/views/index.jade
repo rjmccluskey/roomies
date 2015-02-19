@@ -12,6 +12,8 @@ block content
   else
     p You don't belong to any houses yet!
 
+  a(href="/search_form") Search users
+
   form(action='/houses' method='POST')
     h3 Create a new house!
     input(type="text" placeholder="House name" name="name")
@@ -28,4 +30,4 @@ block content
   if messages.success
     p= messages.success
 
-  a(href="/users/logout") Logout
+  a(href="/logout") Logout

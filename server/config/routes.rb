@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
 
-  resources :users
-  resources :houses do
+  get 'users/search' => 'users#search'
+  resources :users, only: [:create, :show]
+
+  resources :houses, only: [:create, :show] do
     member do
       patch 'join'
     end

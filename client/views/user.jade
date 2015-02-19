@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  if user
+    img(src="#{user.profile_picture_url}")
+    h3= user.display_name
+    h3 #{user.first_name}'s houses:
+    ul
+      for house in houses
+        li
+          a(href="/houses/#{house.id}")
+            p= house.name

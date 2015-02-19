@@ -33,6 +33,17 @@ class UsersController < ApplicationController
     end
   end
 
+  def search
+    search = permit_params[:search]
+    users = User.where('display_name LIKE ? OR email LIKE ? OR phone LIKE ?', "%#{search}%", "%#{search}%", "%#{search}%")
+
+    if users.empty?
+      render json: {error: 'User not found, try again'}
+    else
+      render json: {users: users}
+    end
+  end
+
   private
 
   def add_attributes(object, args)
@@ -40,7 +51,7 @@ class UsersController < ApplicationController
   end
 
   def permit_params
-    params.permit(:code, :id)
+    params.permit(:code, :id, :search)
   end
 
 end

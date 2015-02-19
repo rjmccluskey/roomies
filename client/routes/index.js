@@ -24,4 +24,42 @@ router.get('/', function(req, res) {
   }
 });
 
+router.get('/search_form', function(req,res) {
+  if (req.session.venmo_id) {
+    res.render('search');
+  }
+  else {
+    res.redirect('/');
+  }
+});
+
+router.get('/search', function(req,res) {
+  if (req.session.venmo_id) {
+    rest
+      .get('http://localhost:3000/users/search', {
+        data: {search: req.param('search')}
+      })
+      .on('complete', function(data) {
+        var error = data.error;
+
+        if (error) {
+          req.flash('error', error);
+          res.render('search');
+        }
+        else {
+          res.render('search', data);
+        }
+      });
+  }
+  else {
+    res.redirect('/')
+  }
+});
+
+router.get('/logout', function(req, res) {
+  req.session.venmo_id = '';
+  req.session.access_token = '';
+  res.redirect('/');
+});
+
 module.exports = router;
