@@ -13,4 +13,6 @@ RSpec.describe House, :type => :model do
   it {should ensure_length_of(:password).is_at_least(8).is_at_most(20)}
 
   it {should have_secure_password }
+
+  it {should have_and_belong_to_many :users}
 end

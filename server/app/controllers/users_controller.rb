@@ -27,7 +27,7 @@ class UsersController < ApplicationController
   def show
     user = User.find_by(venmo_id: permit_params[:id])
     if user
-      render json: user
+      render json: {user: user, houses: user.houses}
     else
       render json: {error: "User not found"}
     end

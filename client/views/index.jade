@@ -3,11 +3,12 @@ extends layout
 block content
   h3 Hello #{user.first_name}
 
-  if user.houses
+  if houses.length > 0
+    h3 Your houses:
     ul
-      for house in user.houses
+      for house in houses
         li
-          a(href="/houses/#{house.id}")= house
+          a(href="/houses/#{house.id}")= house.name
   else
     p You don't belong to any houses yet!
 
