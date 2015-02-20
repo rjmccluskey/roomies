@@ -27,6 +27,10 @@ block content
         for error in errors
           li= error
 
+  if messages.venmo_error
+    p Opps! Looks like there was a problem with Venmo:
+    p= messages.venmo_error
+
   if messages.success
     p= messages.success
 
