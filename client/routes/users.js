@@ -10,9 +10,15 @@ router.get('/venmo_oauth', function(req, res) {
       .post('http://localhost:3000/users',
         { data: {'code': code} })
       .on('complete', function(data) {
-        req.session.venmo_id = data.venmo_id;
-        req.session.access_token = data.access_token;
-        res.redirect('/');
+        console.log(data);
+        if (data.error) {
+          req.flash('venmo_error', data.error);
+          res.redirect('/');
+        }
+        else {
+          req.session.venmo_id = data.venmo_id;
+          res.redirect('/');
+        }
       });
   }
   else {

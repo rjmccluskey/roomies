@@ -5,11 +5,12 @@ class UsersController < ApplicationController
     venmo = Venmo::Oauth.new(permit_params[:code])
     venmo_info = venmo.oauth
     user_info = venmo_info["user"]
+    error = venmo_info["error"]
     user = User.find_by(venmo_id: user_info["id"])
 
-    if user
+    if user && !error
       user.update_attributes(access_token: venmo_info["access_token"], refresh_token: venmo_info["refresh_token"])
-    else
+    elsif !error
       user = User.new
 
       # rename "id" to "venmo_id" so that it doesn't conflict with User
@@ -21,7 +22,7 @@ class UsersController < ApplicationController
       user.save
     end
 
-    render json: {venmo_id: user.venmo_id, access_token: user.access_token}
+    render json: {venmo_id: user.venmo_id, error: error}
   end
 
   def show
