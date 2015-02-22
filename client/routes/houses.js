@@ -88,4 +88,26 @@ router.patch('/:house_id/join', function(req,res) {
   });
 });
 
+router.post('/:house_id/expenses', function(req,res) {
+  var house_id = req.param('house_id');
+
+  rest.post('http://localhost:3000/houses/' + house_id + '/expenses', {
+    data: {
+            'venmo_id': req.session.venmo_id,
+            'amount_string': req.param('amount_string'),
+            'note': req.param('note')
+          }
+  })
+  .on('complete', function(data) {
+    if (data.errors) {
+      req.flash('errors', data.errors)
+      res.redirect('/houses/' + house_id);
+    }
+    else {
+      req.flash('expense', 'Expense added!')
+      res.redirect('/houses/' + house_id);
+    }
+  });
+});
+
 module.exports = router;

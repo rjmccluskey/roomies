@@ -6,6 +6,7 @@ class CreateExpenses < ActiveRecord::Migration
       t.float :amount
       t.datetime :date_completed
       t.belongs_to :user
+      t.belongs_to :house
 
       t.timestamps null: false
     end

@@ -14,4 +14,5 @@ RSpec.describe Expense, :type => :model do
   it {should ensure_length_of(:note).is_at_least(1).is_at_most(140)}
 
   it {should belong_to :user}
+  it {should belong_to :house}
 end

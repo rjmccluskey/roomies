@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20150220225157) do
     t.float    "amount"
     t.datetime "date_completed"
     t.integer  "user_id"
+    t.integer  "house_id"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
