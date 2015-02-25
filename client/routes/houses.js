@@ -26,7 +26,7 @@ router.get('/:house_id', function(req,res) {
               res.render('house', {house: house, users: users});
               break;
             }
-          };
+          }
         }
       });
   }

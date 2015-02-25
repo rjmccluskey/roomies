@@ -29,4 +29,5 @@ RSpec.describe User, :type => :model do
 
   it {should have_and_belong_to_many :houses}
   it {should have_many :expenses}
+  it {should have_many :charges}
 end

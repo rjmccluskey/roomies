@@ -5,8 +5,9 @@ class Expense < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :house
+  has_many :charges
 
-  validates_presence_of :note, :amount_string, :user_id
+  validates_presence_of :note, :amount_string, :user_id, :house_id
   validates_format_of :amount_string, with: /\A[$]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{1,2})?\z/, message: "is not a valid amount"
   validates_length_of :note, in: 1..140
 

@@ -17,7 +17,16 @@ class ExpensesController < ApplicationController
       charge_amount = expense.amount / roomies.count
       roomies.each do |roomie|
         unless roomie == user
-          Venmo::Payments.new(access_token, roomie.venmo_id).charge(charge_amount, note)
+          venmo_api = Venmo::Payments.new(access_token, roomie.venmo_id)
+          p venmo_response = venmo_api.charge(charge_amount, note)
+          venmo_payment_info = venmo_response["data"]["payment"]
+
+          p Charge.create(venmo_payment_id: venmo_payment_info["id"],
+                        amount: venmo_payment_info["amount"],
+                        note: note,
+                        status: venmo_payment_info["status"],
+                        expense_id: expense.id,
+                        user_id: roomie.id)
         end
       end
       render json: {success: true}
