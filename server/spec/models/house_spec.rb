@@ -15,4 +15,5 @@ RSpec.describe House, :type => :model do
   it {should have_secure_password }
 
   it {should have_and_belong_to_many :users}
+  it {should have_many :expenses}
 end

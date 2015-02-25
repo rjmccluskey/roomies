@@ -10,6 +10,13 @@ block content
           img(src="#{user.profile_picture_url}")
           p= user.first_name
 
+    h3 Add an expense
+    form(action="/houses/#{house.id}/expenses" method="POST")
+      label $
+        input(type="text" placeholder="##.##" name="amount_string")
+      textarea(placeholder="Add a note to the expense" name="note")
+      input(type="submit" value="Charge your roomies")
+
     if not_a_member
       h3 Join this house:
       form(action="/houses/#{house.id}/join?_method=PATCH" method="POST")
@@ -19,4 +26,4 @@ block content
     if messages.errors
       p= messages.errors
 
-  a(href="/") Back
+  a(href="/") Home

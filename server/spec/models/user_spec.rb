@@ -28,4 +28,6 @@ RSpec.describe User, :type => :model do
   it {should ensure_length_of(:nickname).is_at_most(20)}
 
   it {should have_and_belong_to_many :houses}
+  it {should have_many :expenses}
+  it {should have_many :charges}
 end

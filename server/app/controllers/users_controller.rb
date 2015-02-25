@@ -47,10 +47,6 @@ class UsersController < ApplicationController
 
   private
 
-  def add_attributes(object, args)
-    object.attributes = args.reject {|k,v| !object.attributes.keys.member?(k.to_s)}
-  end
-
   def permit_params
     params.permit(:code, :id, :search)
   end
