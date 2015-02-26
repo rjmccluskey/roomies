@@ -19,10 +19,12 @@ module JSONFormatting
   end
 
   def users_json_response
-    @users.map do |user|
+    users = @users.map do |user|
       @user = user
       user_json_response[:user]
     end
+
+    {users: users}
   end
 
   def house_json_response
@@ -53,10 +55,8 @@ module JSONFormatting
 
   def user_houses_to_json
     @user.houses.map do |house|
-      {
-        id: house.id,
-        name: house.name
-      }
+      @house = house
+      house_json_without_users
     end
   end
 
@@ -74,7 +74,7 @@ module JSONFormatting
 
   def expense_house_to_json
     @house = @expense.house
-    house_json_response[:house].reject {|k,_| k == :users}
+    house_json_without_users
   end
 
   def expense_charges_to_json
@@ -93,14 +93,19 @@ module JSONFormatting
   end
 
   def charge_user_to_json
-    @charge.user.map do |user|
-      @user = user
-      user_json_without_houses
-    end
+    @user = @charge.user
+    user_json_without_houses
   end
 
   def user_json_without_houses
     user_json_response[:user].reject {|k,_| k == :houses}
+  end
+
+  def house_json_without_users
+    {
+      id: @house.id,
+      name: @house.name
+    }
   end
 
 end
