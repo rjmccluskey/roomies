@@ -8,23 +8,27 @@ class UsersController < ApplicationController
     venmo_info = venmo.oauth
     user_info = venmo_info["user"]
     error = venmo_info["error"]
-    user = User.find_by(venmo_id: user_info["id"])
+    @user = User.find_by(venmo_id: user_info["id"])
 
-    if user && !error
-      user.update_attributes(access_token: venmo_info["access_token"], refresh_token: venmo_info["refresh_token"])
+    if @user && !error
+      @user.update_attributes(access_token: venmo_info["access_token"], refresh_token: venmo_info["refresh_token"])
     elsif !error
-      user = User.new
+      @user = User.new
 
       # rename "id" to "venmo_id" so that it doesn't conflict with User
       user_info["venmo_id"] = user_info["id"]
       user_info.delete("id")
 
-      add_attributes(user,venmo_info)
-      add_attributes(user,user_info)
-      user.save
+      add_attributes(@user,venmo_info)
+      add_attributes(@user,user_info)
+      @user.save
     end
 
-    render json: {venmo_id: user.venmo_id, error: error}
+    if error
+      render json: {error: error}
+    else
+      render json: user_json_response
+    end
   end
 
   def show
