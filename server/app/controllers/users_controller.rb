@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include JSONFormating
+
   before_filter :cors_set_access_control_headers
 
   def create
@@ -26,9 +28,9 @@ class UsersController < ApplicationController
   end
 
   def show
-    user = User.find_by(venmo_id: permit_params[:id])
-    if user
-      render json: {user: user, houses: user.houses}
+    @user = User.find_by(venmo_id: permit_params[:id])
+    if @user
+      render json: user_json_response
     else
       render json: {error: "User not found"}
     end
