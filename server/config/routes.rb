@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :houses, only: [:create, :show] do
     resources :expenses, only: [:create]
     member do
-      patch 'join'
+      post 'join'
     end
   end
 

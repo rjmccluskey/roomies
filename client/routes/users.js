@@ -16,7 +16,8 @@ router.get('/venmo_oauth', function(req, res) {
           res.redirect('/');
         }
         else {
-          req.session.venmo_id = data.venmo_id;
+
+          req.session.venmo_id = data.user.venmo_id;
           res.redirect('/');
         }
       });
