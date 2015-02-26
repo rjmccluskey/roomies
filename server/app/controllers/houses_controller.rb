@@ -10,11 +10,11 @@ class HousesController < ApplicationController
 
     user = User.find_by(venmo_id: permit_params[:venmo_id])
 
-    if house.valid?
+    if @house.valid?
       @house.users << user
       render json: house_json_response
     else
-      render json: {errors: house.errors}
+      render json: {errors: @house.errors}
     end
   end
 
@@ -29,14 +29,14 @@ class HousesController < ApplicationController
   end
 
   def join
-    house = House.find_by_id(permit_params[:id])
+    @house = House.find_by_id(permit_params[:id])
     user = User.find_by(venmo_id: permit_params[:venmo_id])
 
-    if house.authenticate(permit_params[:password])
-      house.users << user
-      render json: {success: true}
+    if @house.authenticate(permit_params[:password])
+      @house.users << user
+      render json: house_json_response
     else
-      render json: {errors: 'Invalid password'}
+      render json: {error: 'Invalid password'}
     end
   end
 
