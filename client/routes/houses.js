@@ -10,7 +10,7 @@ router.get('/:house_id', function(req,res) {
       .get('http://localhost:3000/houses/' + req.param('house_id'))
       .on('complete', function(data) {
         var errors = data.errors;
-        var users = data.users;
+        var users = data.house.users;
         var house = data.house;
 
         if (data.errors) {
@@ -20,10 +20,10 @@ router.get('/:house_id', function(req,res) {
           for (var i = 0; i <= users.length; i++) {
             // this first if will only be true if the current user is not a member of the house
             if (i === users.length) {
-              res.render('house', {house: house, users: users, not_a_member: true});
+              res.render('house', {house: data.house, not_a_member: true});
             }
             else if (users[i].venmo_id === req.session.venmo_id) {
-              res.render('house', {house: house, users: users});
+              res.render('house', data);
               break;
             }
           }
@@ -58,7 +58,7 @@ router.post('/', function(req,res) {
         req.flash('errors', data.errors);
         res.redirect('/');
       }
-      else if (data.success) {
+      else {
         req.flash('success', 'Created house: ' + name)
         res.redirect('/')
       }
@@ -82,7 +82,7 @@ router.patch('/:house_id/join', function(req,res) {
       req.flash('errors', data.errors)
       res.redirect('/houses/' + house_id)
     }
-    else if (data.success) {
+    else {
       res.redirect('/houses/' + house_id)
     }
   });

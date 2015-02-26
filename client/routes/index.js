@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
           res.redirect('/');
         }
         else {
-          res.render('index', {user: data.user, houses: data.houses})
+          res.render('index', data)
         }
       });
   }
