@@ -1,5 +1,5 @@
 class HousesController < ApplicationController
-  include JSONFormating
+  include JSONFormatting
 
   before_filter :cors_set_access_control_headers
 
