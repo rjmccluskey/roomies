@@ -88,7 +88,8 @@
     email: "",
     phone: "",
     profile_picture_url: "",
-    venmo_id: ""
+    venmo_id: "",
+    houses: []
   }
 }
 ```
@@ -102,7 +103,18 @@
 {
   house: {
     id: 1,
-    name: ""
+    name: "",
+    users: [{
+      id: 1,
+      nickname: "",
+      first_name: "",
+      last_name: "",
+      display_name: "",
+      email: "",
+      phone: "",
+      profile_picture_url: "",
+      venmo_id: ""
+    }]
   }
 }
 ```
