@@ -1,4 +1,6 @@
 class HousesController < ApplicationController
+  include JSONFormating
+
   before_filter :cors_set_access_control_headers
 
   def create
@@ -17,11 +19,10 @@ class HousesController < ApplicationController
   end
 
   def show
-    house = House.find_by_id(permit_params[:id])
+    @house = House.find_by_id(permit_params[:id])
 
-    if house
-      users = house.users
-      render json: {house: house, users: users}
+    if @house
+      render json: house_json_response
     else
       render json: {errors: "House does not exist"}
     end

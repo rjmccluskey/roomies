@@ -18,6 +18,23 @@ module JSONFormating
     }
   end
 
+  def users_json_response
+    @users.map do |user|
+      @user = user
+      user_json_response[:user]
+    end
+  end
+
+  def house_json_response
+    {
+      house: {
+        id: @house.id,
+        name: @house.name,
+        users: house_users_to_json
+      }
+    }
+  end
+
   private
 
   def user_houses_to_json
@@ -28,4 +45,12 @@ module JSONFormating
       }
     end
   end
+
+  def house_users_to_json
+    @house.users.map do |user|
+      @user = user
+      user_json_response[:user].reject {|k,_| k == :houses}
+    end
+  end
+
 end

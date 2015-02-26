@@ -38,12 +38,12 @@ class UsersController < ApplicationController
 
   def search
     search = permit_params[:search]
-    users = User.where('display_name LIKE ? OR email LIKE ? OR phone LIKE ?', "%#{search}%", "%#{search}%", "%#{search}%")
+    @users = User.where('display_name LIKE ? OR email LIKE ? OR phone LIKE ?', "%#{search}%", "%#{search}%", "%#{search}%")
 
-    if users.empty?
+    if @users.empty?
       render json: {error: 'User not found, try again'}
     else
-      render json: {users: users}
+      render json: users_json_response
     end
   end
 
