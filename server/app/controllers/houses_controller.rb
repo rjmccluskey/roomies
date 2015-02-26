@@ -4,15 +4,15 @@ class HousesController < ApplicationController
   before_filter :cors_set_access_control_headers
 
   def create
-    house = House.create name: permit_params[:name],
-                         password: permit_params[:password],
-                         password_confirmation: permit_params[:password_confirmation]
+    @house = House.create name: permit_params[:name],
+                          password: permit_params[:password],
+                          password_confirmation: permit_params[:password_confirmation]
 
     user = User.find_by(venmo_id: permit_params[:venmo_id])
 
     if house.valid?
-      house.users << user
-      render json: {success: true}
+      @house.users << user
+      render json: house_json_response
     else
       render json: {errors: house.errors}
     end
