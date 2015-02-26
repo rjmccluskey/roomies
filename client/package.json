@@ -1,6 +1,6 @@
 {
-  "name": "Roomies-Client",
-  "version": "0.0.0",
+  "name": "roomies-web",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "body-parser": "~1.8.1",
+    "bower": "^1.3.12",
     "cookie-parser": "~1.3.3",
     "debug": "~2.0.0",
     "dotenv": "^0.5.1",
