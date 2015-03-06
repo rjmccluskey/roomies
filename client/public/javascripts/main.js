@@ -39,8 +39,8 @@
       var user = this.props.data.user;
       return (
         <nav className="navbar navbar-inverse navbar-fixed-top" >
-
           <div className="container">
+
             <div className="navbar-header">
               <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                 <span className="sr-only">Toggle navigation</span>
@@ -51,11 +51,13 @@
               <a className="navbar-brand" href="#">roomies</a>
             </div>
 
+
             <div className="collapse navbar-collapse" id="navbar-collapse">
               <ul className="nav navbar-nav">
                 <li><a href="#">houses</a></li>
                 <li><a href="#">expenses</a></li>
               </ul>
+              <UserSearchForm />
               <ul className="nav navbar-nav navbar-right">
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -70,21 +72,22 @@
                 </li>
               </ul>
             </div>
-          </div>
 
+          </div>
         </nav>
       );
     }
   });
 
-  var UserIcon = React.createClass({
+  var UserSearchForm = React.createClass({
     render: function() {
-      var user = this.props.user;
       return (
-        <div className="userIcon">
-          <span>{user.first_name}</span>
-          <img src={user.profile_picture_url} />
-        </div>
+        <form className="navbar-form navbar-left" role="search">
+          <div className="form-group">
+            <input type="text" className="form-control" placeholder="Search Users" />
+          </div>
+          <button type="submit" className="btn btn-default">Search</button>
+        </form>
       );
     }
   });
