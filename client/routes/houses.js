@@ -14,7 +14,7 @@ router.get('/:house_id', function(req,res) {
         var house = data.house;
 
         if (data.errors) {
-          res.redirect('/');
+          res.json({errors: errors});
         }
         else {
           for (var i = 0; i <= users.length; i++) {
@@ -23,7 +23,7 @@ router.get('/:house_id', function(req,res) {
               res.render('house', {house: data.house, not_a_member: true});
             }
             else if (users[i].venmo_id === req.session.venmo_id) {
-              res.render('house', data);
+              res.json(data);
               break;
             }
           }
