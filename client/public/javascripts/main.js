@@ -157,20 +157,79 @@
     render: function() {
       var house = this.props.house;
       var users = this.state.house.users;
+      var roomieLabel = "";
+      if (users.length === 1) {
+        roomieLabel = "roomie:";
+      }
+      else {
+        roomieLabel = "roomies:"
+      }
+      var userNodes = users.map(function(user) {
+        return (
+          <span title={user.first_name} key={user.id} >
+            <img src={user.profile_picture_url} />
+          </span>
+        );
+      });
       return (
         <div className="container">
           <div className="jumbotron">
-            <h1>{house.name}</h1>
+            <div className="row">
+              <div className="col-sm-8">
+                <h1>{house.name}</h1>
+              </div>
+              <div className="col-sm-4">
+                <h3>{users.length} {roomieLabel}</h3>
+                {userNodes}
+              </div>
+            </div>
+            <ExpenseForm houseId={house.id} />
           </div>
         </div>
       );
     }
   });
 
-  var HouseUser = React.createClass({
+  var ExpenseForm = React.createClass({
     render: function() {
+      var houseId = this.props.houseId;
       return (
-
+        // <form className="form-inline expense-form">
+        //   <div className="form-group">
+        //     <label className="sr-only" htmlFor="inputAmount">Amount (in dollars)</label>
+        //     <div className="input-group">
+        //       <div className="input-group-addon">$</div>
+        //       <input type="text" className="form-control" id="inputAmount" placeholder="Amount" />
+        //     </div>
+        //   </div>
+        //   <div className="row">
+        //     <div className="col-sm-3">
+        //       <button type="submit" className="btn btn-primary btn-block">Add expense</button>
+        //     </div>
+        //   </div>
+        // </form>
+        <form className="expense-form">
+          <div className="form-group form-group-tight row">
+            <div className="col-sm-8">
+              <label className="sr-only" htmlFor={"inputAmount" + houseId}>Amount (in dollars)</label>
+              <div className="input-group">
+                <div className="input-group-addon">$</div>
+                <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" />
+              </div>
+            </div>
+          </div>
+          <div className="form-group form-group-tight row">
+            <div className="col-sm-8">
+              <label className="sr-only" htmlFor={"inputDescription" + houseId}>Expense description</label>
+              <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3"></textarea>
+            </div>
+          </div>
+          <div className="form-group form-group-tight row">
+            <div className="col-sm-8">
+              <button type="submit" className="btn btn-primary btn-block">Add Expense</button>
+            </div>
+          </div>
+        </form>
       );
     }
   });

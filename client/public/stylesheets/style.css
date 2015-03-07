@@ -7,7 +7,7 @@ a {
 }
 
 .roomiesApp {
-  margin-top: 81px;
+  margin-top: 80px;
 }
 
 .large-padding {
@@ -20,4 +20,12 @@ a {
 
 .user-icon {
   padding: 0!important;
+}
+
+.expense-form {
+  margin-top: 1em;
+}
+
+.form-group-tight {
+  margin-bottom: 0;
 }
