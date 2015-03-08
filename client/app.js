@@ -13,6 +13,7 @@ dotenv.load();
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var houses = require('./routes/houses');
+var expenses = require('./routes/expenses');
 
 var app = express();
 
@@ -40,6 +41,7 @@ app.use(flash());
 app.use('/', routes);
 app.use('/users', users);
 app.use('/houses', houses);
+app.use('/expenses', expenses);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

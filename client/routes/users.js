@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var rest = require('restler')
+var rest = require('restler');
 
 router.get('/venmo_oauth', function(req, res) {
   var code = req.query.code;

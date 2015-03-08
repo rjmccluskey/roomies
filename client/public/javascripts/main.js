@@ -200,17 +200,17 @@
         return;
       }
       $.ajax({
-        url: "/houses/" + houseId + "/expenses",
+        url: "/expenses",
         dataType: 'json',
         type: 'POST',
-        data: {amount_string: amount, note: description},
+        data: {house_id: houseId, amount_string: amount, note: description},
         success: function(data) {
           console.log(data);
           this.refs.amount.getDOMNode.value = "";
           this.refs.description.getDOMNode.value = "";
         }.bind(this),
         error: function(xhr, status, err) {
-          console.error("/houses/" + houseId + "/expenses", status, err.toString());
+          console.error("/expenses", status, err.toString());
         }.bind(this)
       });
     },

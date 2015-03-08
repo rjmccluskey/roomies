@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var rest = require('restler')
+var rest = require('restler');
 
 router.get('/', function(req, res) {
   venmo_id = req.session.venmo_id
