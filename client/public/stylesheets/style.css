@@ -1,8 +1,31 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+.roomiesApp {
+  margin-top: 80px;
+}
+
+.large-padding {
+  padding: 30px 0 30px 0;
+}
+
+.medium-padding {
+  padding: 15px 0 15px 0;
+}
+
+.user-icon {
+  padding: 0!important;
+}
+
+.expense-form {
+  margin-top: 1em;
+}
+
+.form-group-tight {
+  margin-bottom: 0;
 }
