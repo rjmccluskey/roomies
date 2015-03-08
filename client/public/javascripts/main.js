@@ -194,20 +194,6 @@
     render: function() {
       var houseId = this.props.houseId;
       return (
-        // <form className="form-inline expense-form">
-        //   <div className="form-group">
-        //     <label className="sr-only" htmlFor="inputAmount">Amount (in dollars)</label>
-        //     <div className="input-group">
-        //       <div className="input-group-addon">$</div>
-        //       <input type="text" className="form-control" id="inputAmount" placeholder="Amount" />
-        //     </div>
-        //   </div>
-        //   <div className="row">
-        //     <div className="col-sm-3">
-        //       <button type="submit" className="btn btn-primary btn-block">Add expense</button>
-        //     </div>
-        //   </div>
-        // </form>
         <form className="expense-form">
           <div className="form-group form-group-tight row">
             <div className="col-sm-8">
