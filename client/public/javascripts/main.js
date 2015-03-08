@@ -191,23 +191,46 @@
   });
 
   var ExpenseForm = React.createClass({
+    handleSubmit: function(e) {
+      e.preventDefault();
+      var houseId = this.props.houseId;
+      var amount = this.refs.amount.getDOMNode().value.trim();
+      var description = this.refs.description.getDOMNode().value.trim();
+      if (!amount || !description) {
+        return;
+      }
+      $.ajax({
+        url: "/houses/" + houseId + "/expenses",
+        dataType: 'json',
+        type: 'POST',
+        data: {amount_string: amount, note: description},
+        success: function(data) {
+          console.log(data);
+          this.refs.amount.getDOMNode.value = "";
+          this.refs.description.getDOMNode.value = "";
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error("/houses/" + houseId + "/expenses", status, err.toString());
+        }.bind(this)
+      });
+    },
     render: function() {
       var houseId = this.props.houseId;
       return (
-        <form className="expense-form">
+        <form className="expense-form" onSubmit={this.handleSubmit}>
           <div className="form-group form-group-tight row">
             <div className="col-sm-8">
               <label className="sr-only" htmlFor={"inputAmount" + houseId}>Amount (in dollars)</label>
               <div className="input-group">
                 <div className="input-group-addon">$</div>
-                <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" />
+                <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" ref="amount" />
               </div>
             </div>
           </div>
           <div className="form-group form-group-tight row">
             <div className="col-sm-8">
               <label className="sr-only" htmlFor={"inputDescription" + houseId}>Expense description</label>
-              <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3"></textarea>
+              <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3" ref="description"></textarea>
             </div>
           </div>
           <div className="form-group form-group-tight row">
