@@ -24,7 +24,7 @@ class HousesController < ApplicationController
     if @house
       render json: house_json_response
     else
-      render json: {errors: "House does not exist"}
+      render json: {error: "House does not exist"}
     end
   end
 
@@ -40,9 +40,20 @@ class HousesController < ApplicationController
     end
   end
 
+  def show_expenses
+    house = House.find_by_id(permit_params[:house_id])
+    @expenses = house.expenses
+
+    if house
+      render json: house_expenses_json_response
+    else
+      render json: {error: "House does not exist"}
+    end
+  end
+
   private
 
   def permit_params
-    params.permit(:id, :venmo_id, :name, :password, :password_confirmation)
+    params.permit(:id, :house_id, :venmo_id, :name, :password, :password_confirmation)
   end
 end

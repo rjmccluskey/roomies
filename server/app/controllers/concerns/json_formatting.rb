@@ -50,6 +50,15 @@ module JSONFormatting
     }
   end
 
+  def house_expenses_json_response
+    expenses = @expenses.map do |expense|
+      @expense = expense
+      expense_json_response[:expense]
+    end
+
+    {expenses: expenses}
+  end
+
 
   private
 

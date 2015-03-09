@@ -175,16 +175,66 @@
         <div className="container">
           <div className="jumbotron">
             <div className="row">
-              <div className="col-sm-8">
+              <div className="col-sm-7">
                 <h1>{house.name}</h1>
-              </div>
-              <div className="col-sm-4">
                 <h3>{users.length} {roomieLabel}</h3>
                 {userNodes}
               </div>
+              <div className="col-sm-5">
+                <HouseExpenses houseId={house.id} />
+                <ExpenseForm houseId={house.id} />
+              </div>
             </div>
-            <ExpenseForm houseId={house.id} />
           </div>
+        </div>
+      );
+    }
+  });
+
+  var HouseExpenses = React.createClass({
+    loadExpensesFromServer: function() {
+      url = "/houses/" + this.props.houseId + "/expenses";
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        success: function(data) {
+          this.setState(data);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+        }.bind(this)
+      });
+    },
+    getInitialState: function() {
+      return (
+        {
+          expenses: [
+            {
+              amount: "",
+              note: "",
+              user: {profile_picture_url: ""}
+            }
+          ]
+        }
+      );
+    },
+    componentDidMount: function() {
+      this.loadExpensesFromServer();
+    },
+    render: function() {
+      var houseId = this.props.houseId;
+      var expenses = this.state.expenses;
+      var expenseNodes = expenses.map(function(expense) {
+        return (
+          <a className="list-group-item" href="#" key={expense.id} >
+            <img src={expense.user.profile_picture_url} />
+            <span> added ${expense.amount} for {expense.note}</span>
+          </a>
+        );
+      });
+      return (
+        <div className="list-group">
+          {expenseNodes}
         </div>
       );
     }
@@ -218,25 +268,19 @@
       var houseId = this.props.houseId;
       return (
         <form className="expense-form" onSubmit={this.handleSubmit}>
-          <div className="form-group form-group-tight row">
-            <div className="col-sm-8">
-              <label className="sr-only" htmlFor={"inputAmount" + houseId}>Amount (in dollars)</label>
-              <div className="input-group">
-                <div className="input-group-addon">$</div>
-                <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" ref="amount" />
-              </div>
+          <div className="form-group form-group-tight">
+            <label className="sr-only" htmlFor={"inputAmount" + houseId}>Amount (in dollars)</label>
+            <div className="input-group">
+              <div className="input-group-addon">$</div>
+              <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" ref="amount" />
             </div>
           </div>
-          <div className="form-group form-group-tight row">
-            <div className="col-sm-8">
-              <label className="sr-only" htmlFor={"inputDescription" + houseId}>Expense description</label>
-              <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3" ref="description"></textarea>
-            </div>
+          <div className="form-group form-group-tight">
+            <label className="sr-only" htmlFor={"inputDescription" + houseId}>Expense description</label>
+            <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3" ref="description"></textarea>
           </div>
-          <div className="form-group form-group-tight row">
-            <div className="col-sm-8">
-              <button type="submit" className="btn btn-primary btn-block">Add Expense</button>
-            </div>
+          <div className="form-group form-group-tight">
+            <button type="submit" className="btn btn-primary btn-block">Add Expense</button>
           </div>
         </form>
       );

@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :users, only: [:create, :show]
 
   resources :houses, only: [:create, :show] do
+    get '/expenses' => 'houses#show_expenses'
     member do
       post 'join'
     end
