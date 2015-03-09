@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var rest = require('restler');
 
+/* Add a new expense */
 router.post('/', function(req,res) {
 
   rest.post('http://localhost:3000/expenses', {
@@ -15,11 +16,11 @@ router.post('/', function(req,res) {
   .on('complete', function(data) {
     if (data.errors) {
       req.flash('errors', data.errors)
-      res.redirect('/houses/' + house_id);
+      res.json(data);
     }
     else {
       req.flash('expense', 'Expense added!')
-      res.redirect('/houses/' + house_id);
+      res.json(data);
     }
   });
 });
