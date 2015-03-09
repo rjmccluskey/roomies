@@ -184,3 +184,56 @@
   }
 }
 ```
+
+---
+### Show a houses's expenses
+#### GET '/houses/:house_id/expenses'
+#### successful response:
+
+```JavaScript
+{
+  expenses: [
+    {
+      id: 1,
+      note: "",
+      amount: 3.33,
+      user: {
+        id: 1,
+        nickname: "",
+        first_name: "",
+        last_name: "",
+        display_name: "",
+        email: "",
+        phone: "",
+        profile_picture_url: "",
+        venmo_id: ""
+      },
+      house: {
+        id: 1,
+        name: ""
+      },
+      charges: [
+        {
+          id: 1,
+          venmo_payment_id: "",
+          amount: 1.11,
+          note: "",
+          status: "",
+          date_completed: "",
+          user: {
+            id: 1,
+            nickname: "",
+            first_name: "",
+            last_name: "",
+            display_name: "",
+            email: "",
+            phone: "",
+            profile_picture_url: "",
+            venmo_id: ""
+          }
+        }...
+      ]
+    }
+  ]...
+}
+```
