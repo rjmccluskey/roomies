@@ -39,7 +39,6 @@ router.get('/:house_id/expenses', function(req, res) {
   rest
     .get('http://localhost:3000/houses/' + req.param('house_id') + '/expenses')
     .on('complete', function(data) {
-      console.log(data);
       res.json(data);
     });
 });

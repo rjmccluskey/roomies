@@ -43,6 +43,7 @@ module JSONFormatting
         id: @expense.id,
         note: @expense.note,
         amount: @expense.amount,
+        created_at: @expense.created_at,
         user: expense_user_to_json,
         house: expense_house_to_json,
         charges: expense_charges_to_json

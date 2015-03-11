@@ -210,8 +210,10 @@
         {
           expenses: [
             {
+              id: "",
               amount: "",
               note: "",
+              created_at: "",
               user: {profile_picture_url: ""}
             }
           ]
@@ -226,9 +228,14 @@
       var expenses = this.state.expenses;
       var expenseNodes = expenses.map(function(expense) {
         return (
-          <a className="list-group-item" href="#" key={expense.id} >
-            <img src={expense.user.profile_picture_url} />
-            <span> added ${expense.amount} for {expense.note}</span>
+          <a className="media list-group-item" href="#" key={expense.id}>
+            <div className="media-left">
+              <img className="media-object" src={expense.user.profile_picture_url} />
+            </div>
+            <div className="media-body">
+              <p className="media-heading "><small>added ${expense.amount} for {expense.note}</small></p>
+              <p><small><small>{Dateify.printDays(expense.created_at)}</small></small></p>
+            </div>
           </a>
         );
       });

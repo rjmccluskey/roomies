@@ -42,7 +42,7 @@ class HousesController < ApplicationController
 
   def show_expenses
     house = House.find_by_id(permit_params[:house_id])
-    @expenses = house.expenses
+    @expenses = house.expenses.order('created_at DESC')
 
     if house
       render json: house_expenses_json_response
