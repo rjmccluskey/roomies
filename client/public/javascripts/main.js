@@ -214,7 +214,15 @@
               amount: "",
               note: "",
               created_at: "",
-              user: {profile_picture_url: ""}
+              user: {profile_picture_url: ""},
+              charges: [
+                {
+                  id: "",
+                  amount: "",
+                  user: {profile_picture_url: ""},
+                  date_completed: ""
+                }
+              ]
             }
           ]
         }
@@ -228,7 +236,7 @@
       var expenses = this.state.expenses;
       var expenseNodes = expenses.map(function(expense) {
         return (
-          <a className="media list-group-item" href="#" key={expense.id}>
+          <div className="media list-group-item" href="#" key={expense.id}>
             <div className="media-left">
               <img className="media-object" src={expense.user.profile_picture_url} />
             </div>
@@ -236,12 +244,63 @@
               <p className="media-heading "><small>added ${expense.amount} for {expense.note}</small></p>
               <p><small><small>{Dateify.printDays(expense.created_at)}</small></small></p>
             </div>
-          </a>
+            <ExpenseCharges expense={expense} />
+          </div>
         );
       });
       return (
         <div className="list-group">
           {expenseNodes}
+        </div>
+      );
+    }
+  });
+
+  var ExpenseCharges = React.createClass({
+    render: function() {
+      var expense = this.props.expense;
+      var expenseId = "expense-charges" + expense.id;
+      var numPending = expense.charges.length;
+      var expenseStatus = "btn-warning"
+      for (var i = 0; i < expense.charges.length; i++) {
+        if (expense.charges[i].date_completed) {
+          numPending--;
+        }
+      };
+      if (numPending === 0) {
+        expenseStatus = "btn-success";
+      };
+
+      var chargeNodes = expense.charges.map(function(charge) {
+        var message;
+        var chargeStatus;
+        var glyphicon;
+        if (charge.date_completed) {
+          message = "paid $" + charge.amount + " " + Dateify.printDays(charge.date_completed);
+          chargeStatus = "bg-success";
+          glyphicon = "glyphicon glyphicon-ok-circle"
+        }
+        else {
+          message = "owes $" + charge.amount;
+          chargeStatus = "bg-warning"
+        }
+        return (
+          <div className="list-group-item well no-padding group-tight" key={charge.id}>
+            <div className={chargeStatus}>
+              <img src={charge.user.profile_picture_url} />
+              <span> {message}</span><span className={"pull-right " + glyphicon}></span>
+            </div>
+          </div>
+        );
+      });
+      return (
+        <div className="expense-charges">
+          <a className ={"btn " + expenseStatus} data-toggle="collapse" href={"#" + expenseId} aria-expanded="false" aria-controls="collapseExample">
+            <span className="caret" /> Charges <span className="badge">{numPending} pending</span>
+          </a>
+          <div className="list-group collapse" id={expenseId}>
+            {chargeNodes}
+          </div>
         </div>
       );
     }
@@ -275,18 +334,18 @@
       var houseId = this.props.houseId;
       return (
         <form className="expense-form" onSubmit={this.handleSubmit}>
-          <div className="form-group form-group-tight">
+          <div className="form-group group-tight">
             <label className="sr-only" htmlFor={"inputAmount" + houseId}>Amount (in dollars)</label>
             <div className="input-group">
               <div className="input-group-addon">$</div>
               <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" ref="amount" />
             </div>
           </div>
-          <div className="form-group form-group-tight">
+          <div className="form-group group-tight">
             <label className="sr-only" htmlFor={"inputDescription" + houseId}>Expense description</label>
             <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3" ref="description"></textarea>
           </div>
-          <div className="form-group form-group-tight">
+          <div className="form-group group-tight">
             <button type="submit" className="btn btn-primary btn-block">Add Expense</button>
           </div>
         </form>
