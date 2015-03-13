@@ -242,7 +242,7 @@
             </div>
             <div className="media-body">
               <p className="media-heading "><small>added ${expense.amount} for {expense.note}</small></p>
-              <p><small><small>{Dateify.printDays(expense.created_at)}</small></small></p>
+              <p><small><small>{Dateify.sayDays(expense.created_at) + " at " + Dateify.sayTime(expense.created_at)}</small></small></p>
             </div>
             <ExpenseCharges expense={expense} />
           </div>
@@ -275,8 +275,9 @@
         var message;
         var chargeStatus;
         var glyphicon;
-        if (charge.date_completed) {
-          message = "paid $" + charge.amount + " " + Dateify.printDays(charge.date_completed);
+        var date_completed = charge.date_completed;
+        if (date_completed) {
+          message = "paid $" + charge.amount + " " + Dateify.sayDays(date_completed) + " at " + Dateify.sayTime(date_completed);
           chargeStatus = "bg-success";
           glyphicon = "glyphicon glyphicon-ok-circle"
         }
@@ -321,14 +322,14 @@
         type: 'POST',
         data: {house_id: houseId, amount_string: amount, note: description},
         success: function(data) {
-          console.log(data);
-          this.refs.amount.getDOMNode.value = "";
-          this.refs.description.getDOMNode.value = "";
         }.bind(this),
         error: function(xhr, status, err) {
           console.error("/expenses", status, err.toString());
         }.bind(this)
       });
+      this.refs.amount.getDOMNode.value = "";
+      this.refs.description.getDOMNode.value = "";
+
     },
     render: function() {
       var houseId = this.props.houseId;
