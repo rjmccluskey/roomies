@@ -131,6 +131,7 @@
 
   var House = React.createClass({
     loadHouseFromServer: function() {
+      var url = "/houses/" + this.props.house.id;
       $.ajax({
         url: "/houses/" + this.props.house.id,
         dataType: 'json',
@@ -138,54 +139,12 @@
           this.setState(data);
         }.bind(this),
         error: function(xhr, status, err) {
-          console.error("/houses", status, err.toString());
+          console.error(url, status, err.toString());
         }.bind(this)
       });
     },
-    getInitialState: function() {
-      return(
-        {
-          house: {
-            users: []
-          }
-        }
-      );
-    },
-    componentDidMount: function() {
-      this.loadHouseFromServer();
-    },
-    render: function() {
-      var house = this.props.house;
-      var users = this.state.house.users;
-
-      var userNodes = users.map(function(user) {
-        return (
-          <span title={user.first_name} key={user.id} >
-            <img src={user.profile_picture_url} />
-          </span>
-        );
-      });
-      return (
-        <div className="container">
-          <div className="jumbotron">
-            <div className="row">
-              <div className="col-sm-5">
-                <h2>{house.name} <span>{userNodes}</span></h2>
-                <ExpenseForm houseId={house.id} />
-              </div>
-              <div className="col-sm-7">
-                <HouseExpenses houseId={house.id} />
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-  });
-
-  var HouseExpenses = React.createClass({
     loadExpensesFromServer: function() {
-      url = "/houses/" + this.props.houseId + "/expenses";
+      var url = "/houses/" + this.props.house.id + "/expenses";
       $.ajax({
         url: url,
         dataType: 'json',
@@ -197,9 +156,33 @@
         }.bind(this)
       });
     },
+    handleExpenseSubmit: function(expense) {
+      var houseId = this.state.house.id;
+      var amount = expense.amount;
+      var description = expense.description;
+      var $btn = $("#expense-form-button" + houseId).button('loading');
+
+      $.ajax({
+        url: "/expenses",
+        dataType: 'json',
+        type: 'POST',
+        data: {house_id: houseId, amount_string: amount, note: description},
+        success: function(data) {
+          this.loadExpensesFromServer();
+          $btn.button("reset");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error("/expenses", status, err.toString());
+          $btn.button("reset");
+        }.bind(this)
+      });
+    },
     getInitialState: function() {
-      return (
+      return(
         {
+          house: {
+            users: []
+          },
           expenses: [
             {
               id: "",
@@ -221,11 +204,44 @@
       );
     },
     componentDidMount: function() {
-      this.loadExpensesFromServer();
+      this.loadHouseFromServer();
     },
     render: function() {
-      var houseId = this.props.houseId;
+      var house = this.props.house;
+      var users = this.state.house.users;
       var expenses = this.state.expenses;
+
+      var userNodes = users.map(function(user) {
+        return (
+          <span title={user.first_name} key={user.id} >
+            <img src={user.profile_picture_url} />
+          </span>
+        );
+      });
+      return (
+        <div className="container">
+          <div className="jumbotron">
+            <div className="row">
+              <div className="col-sm-5">
+                <h2>{house.name} <span>{userNodes}</span></h2>
+                <ExpenseForm houseId={house.id} onExpenseSubmit={this.handleExpenseSubmit} />
+              </div>
+              <div className="col-sm-7">
+                <HouseExpenses expenses={expenses} loadExpensesFromServer={this.loadExpensesFromServer} />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var HouseExpenses = React.createClass({
+    componentDidMount: function() {
+      this.props.loadExpensesFromServer();
+    },
+    render: function() {
+      var expenses = this.props.expenses;
       var expenseNodes = expenses.map(function(expense) {
         return (
           <div className="media list-group-item" href="#" key={expense.id}>
@@ -240,11 +256,20 @@
           </div>
         );
       });
-      return (
-        <div className="list-group house-expenses well">
-          {expenseNodes}
-        </div>
-      );
+      if (expenses.length > 0) {
+        return (
+          <div className="list-group house-expenses well">
+            {expenseNodes}
+          </div>
+        );
+      }
+      else {
+        return (
+          <div className="list-group house-expenses well">
+            <h3>No expenses have been added yet!</h3>
+          </div>
+        );
+      };
     }
   });
 
@@ -302,26 +327,14 @@
   var ExpenseForm = React.createClass({
     handleSubmit: function(e) {
       e.preventDefault();
-      var houseId = this.props.houseId;
       var amount = this.refs.amount.getDOMNode().value.trim();
       var description = this.refs.description.getDOMNode().value.trim();
       if (!amount || !description) {
         return;
       }
-      $.ajax({
-        url: "/expenses",
-        dataType: 'json',
-        type: 'POST',
-        data: {house_id: houseId, amount_string: amount, note: description},
-        success: function(data) {
-        }.bind(this),
-        error: function(xhr, status, err) {
-          console.error("/expenses", status, err.toString());
-        }.bind(this)
-      });
-      this.refs.amount.getDOMNode.value = "";
-      this.refs.description.getDOMNode.value = "";
-
+      this.props.onExpenseSubmit({amount: amount, description: description});
+      this.refs.amount.getDOMNode.value = '';
+      this.refs.description.getDOMNode.value = '';
     },
     render: function() {
       var houseId = this.props.houseId;
@@ -339,7 +352,7 @@
             <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3" ref="description"></textarea>
           </div>
           <div className="form-group group-tight">
-            <button type="submit" className="btn btn-primary btn-block">Add Expense</button>
+            <button type="submit" className="btn btn-primary btn-block" id={"expense-form-button" + houseId} data-loading-text="Adding...">Add Expense</button>
           </div>
         </form>
       );
