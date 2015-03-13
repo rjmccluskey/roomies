@@ -131,6 +131,7 @@
 
   var House = React.createClass({
     loadHouseFromServer: function() {
+      var url = "/houses/" + this.props.house.id;
       $.ajax({
         url: "/houses/" + this.props.house.id,
         dataType: 'json',
@@ -138,7 +139,41 @@
           this.setState(data);
         }.bind(this),
         error: function(xhr, status, err) {
-          console.error("/houses", status, err.toString());
+          console.error(url, status, err.toString());
+        }.bind(this)
+      });
+    },
+    loadExpensesFromServer: function() {
+      var url = "/houses/" + this.props.house.id + "/expenses";
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        success: function(data) {
+          this.setState(data);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+        }.bind(this)
+      });
+    },
+    handleExpenseSubmit: function(expense) {
+      var houseId = this.state.house.id;
+      var amount = expense.amount;
+      var description = expense.description;
+      var $btn = $("#expense-form-button" + houseId).button('loading');
+
+      $.ajax({
+        url: "/expenses",
+        dataType: 'json',
+        type: 'POST',
+        data: {house_id: houseId, amount_string: amount, note: description},
+        success: function(data) {
+          this.loadExpensesFromServer();
+          $btn.button("reset");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error("/expenses", status, err.toString());
+          $btn.button("reset");
         }.bind(this)
       });
     },
@@ -147,7 +182,24 @@
         {
           house: {
             users: []
-          }
+          },
+          expenses: [
+            {
+              id: "",
+              amount: "",
+              note: "",
+              created_at: "",
+              user: {profile_picture_url: ""},
+              charges: [
+                {
+                  id: "",
+                  amount: "",
+                  user: {profile_picture_url: ""},
+                  date_completed: ""
+                }
+              ]
+            }
+          ]
         }
       );
     },
@@ -157,13 +209,8 @@
     render: function() {
       var house = this.props.house;
       var users = this.state.house.users;
-      var roomieLabel = "";
-      if (users.length === 1) {
-        roomieLabel = "roomie:";
-      }
-      else {
-        roomieLabel = "roomies:"
-      }
+      var expenses = this.state.expenses;
+
       var userNodes = users.map(function(user) {
         return (
           <span title={user.first_name} key={user.id} >
@@ -175,15 +222,102 @@
         <div className="container">
           <div className="jumbotron">
             <div className="row">
-              <div className="col-sm-8">
-                <h1>{house.name}</h1>
+              <div className="col-sm-5">
+                <h2>{house.name} <span>{userNodes}</span></h2>
+                <ExpenseForm houseId={house.id} onExpenseSubmit={this.handleExpenseSubmit} />
               </div>
-              <div className="col-sm-4">
-                <h3>{users.length} {roomieLabel}</h3>
-                {userNodes}
+              <div className="col-sm-7">
+                <HouseExpenses expenses={expenses} loadExpensesFromServer={this.loadExpensesFromServer} />
               </div>
             </div>
-            <ExpenseForm houseId={house.id} />
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var HouseExpenses = React.createClass({
+    componentDidMount: function() {
+      this.props.loadExpensesFromServer();
+    },
+    render: function() {
+      var expenses = this.props.expenses;
+      var expenseNodes = expenses.map(function(expense) {
+        return (
+          <div className="media list-group-item" href="#" key={expense.id}>
+            <div className="media-left">
+              <img className="media-object" src={expense.user.profile_picture_url} />
+            </div>
+            <div className="media-body">
+              <p className="media-heading "><small>added ${expense.amount} for {expense.note}</small></p>
+              <p><small><small>{Dateify.sayDays(expense.created_at) + " at " + Dateify.sayTime(expense.created_at)}</small></small></p>
+            </div>
+            <ExpenseCharges expense={expense} />
+          </div>
+        );
+      });
+      if (expenses.length > 0) {
+        return (
+          <div className="list-group house-expenses well">
+            {expenseNodes}
+          </div>
+        );
+      }
+      else {
+        return (
+          <div className="list-group house-expenses well">
+            <h3>No expenses have been added yet!</h3>
+          </div>
+        );
+      };
+    }
+  });
+
+  var ExpenseCharges = React.createClass({
+    render: function() {
+      var expense = this.props.expense;
+      var expenseId = "expense-charges" + expense.id;
+      var numPending = expense.charges.length;
+      var expenseStatus = "btn-warning"
+      for (var i = 0; i < expense.charges.length; i++) {
+        if (expense.charges[i].date_completed) {
+          numPending--;
+        }
+      };
+      if (numPending === 0) {
+        expenseStatus = "btn-success";
+      };
+
+      var chargeNodes = expense.charges.map(function(charge) {
+        var message;
+        var chargeStatus;
+        var glyphicon;
+        var date_completed = charge.date_completed;
+        if (date_completed) {
+          message = "paid $" + charge.amount + " " + Dateify.sayDays(date_completed) + " at " + Dateify.sayTime(date_completed);
+          chargeStatus = "bg-success";
+          glyphicon = "glyphicon glyphicon-ok-circle"
+        }
+        else {
+          message = "owes $" + charge.amount;
+          chargeStatus = "bg-warning"
+        }
+        return (
+          <div className="list-group-item well no-padding group-tight" key={charge.id}>
+            <div className={chargeStatus}>
+              <img src={charge.user.profile_picture_url} />
+              <span> {message}</span><span className={"pull-right " + glyphicon}></span>
+            </div>
+          </div>
+        );
+      });
+      return (
+        <div className="expense-charges">
+          <a className ={"btn " + expenseStatus} data-toggle="collapse" href={"#" + expenseId} aria-expanded="false" aria-controls="collapseExample">
+            <span className="caret" /> Charges <span className="badge">{numPending} pending</span>
+          </a>
+          <div className="list-group collapse" id={expenseId}>
+            {chargeNodes}
           </div>
         </div>
       );
@@ -193,50 +327,32 @@
   var ExpenseForm = React.createClass({
     handleSubmit: function(e) {
       e.preventDefault();
-      var houseId = this.props.houseId;
       var amount = this.refs.amount.getDOMNode().value.trim();
       var description = this.refs.description.getDOMNode().value.trim();
       if (!amount || !description) {
         return;
       }
-      $.ajax({
-        url: "/houses/" + houseId + "/expenses",
-        dataType: 'json',
-        type: 'POST',
-        data: {amount_string: amount, note: description},
-        success: function(data) {
-          console.log(data);
-          this.refs.amount.getDOMNode.value = "";
-          this.refs.description.getDOMNode.value = "";
-        }.bind(this),
-        error: function(xhr, status, err) {
-          console.error("/houses/" + houseId + "/expenses", status, err.toString());
-        }.bind(this)
-      });
+      this.props.onExpenseSubmit({amount: amount, description: description});
+      this.refs.amount.getDOMNode().value = '';
+      this.refs.description.getDOMNode().value = '';
     },
     render: function() {
       var houseId = this.props.houseId;
       return (
         <form className="expense-form" onSubmit={this.handleSubmit}>
-          <div className="form-group form-group-tight row">
-            <div className="col-sm-8">
-              <label className="sr-only" htmlFor={"inputAmount" + houseId}>Amount (in dollars)</label>
-              <div className="input-group">
-                <div className="input-group-addon">$</div>
-                <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" ref="amount" />
-              </div>
+          <div className="form-group group-tight">
+            <label className="sr-only" htmlFor={"inputAmount" + houseId}>Amount (in dollars)</label>
+            <div className="input-group">
+              <div className="input-group-addon">$</div>
+              <input type="text" className="form-control" id={"inputAmount" + houseId} placeholder="Amount" ref="amount" />
             </div>
           </div>
-          <div className="form-group form-group-tight row">
-            <div className="col-sm-8">
-              <label className="sr-only" htmlFor={"inputDescription" + houseId}>Expense description</label>
-              <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3" ref="description"></textarea>
-            </div>
+          <div className="form-group group-tight">
+            <label className="sr-only" htmlFor={"inputDescription" + houseId}>Expense description</label>
+            <textarea className="form-control" id={"inputDescription" + houseId} placeholder="Add a description" rows="3" ref="description"></textarea>
           </div>
-          <div className="form-group form-group-tight row">
-            <div className="col-sm-8">
-              <button type="submit" className="btn btn-primary btn-block">Add Expense</button>
-            </div>
+          <div className="form-group group-tight">
+            <button type="submit" className="btn btn-primary btn-block" id={"expense-form-button" + houseId} data-loading-text="Adding...">Add Expense</button>
           </div>
         </form>
       );

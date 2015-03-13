@@ -35,6 +35,14 @@ router.get('/:house_id', function(req,res) {
   }
 });
 
+router.get('/:house_id/expenses', function(req, res) {
+  rest
+    .get('http://localhost:3000/houses/' + req.param('house_id') + '/expenses')
+    .on('complete', function(data) {
+      res.json(data);
+    });
+});
+
 /* Create new house */
 router.post('/', function(req,res) {
   var venmo_id = req.session.venmo_id;
