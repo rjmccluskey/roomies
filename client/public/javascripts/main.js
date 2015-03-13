@@ -333,8 +333,8 @@
         return;
       }
       this.props.onExpenseSubmit({amount: amount, description: description});
-      this.refs.amount.getDOMNode.value = '';
-      this.refs.description.getDOMNode.value = '';
+      this.refs.amount.getDOMNode().value = '';
+      this.refs.description.getDOMNode().value = '';
     },
     render: function() {
       var houseId = this.props.houseId;
