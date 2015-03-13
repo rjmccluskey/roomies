@@ -157,7 +157,7 @@
       });
     },
     handleExpenseSubmit: function(expense) {
-      var houseId = this.state.house.id;
+      var houseId = this.props.house.id;
       var amount = expense.amount;
       var description = expense.description;
       var $btn = $("#expense-form-button" + houseId).button('loading');
