@@ -34,3 +34,8 @@ img {
 .group-tight {
   margin-bottom: 0;
 }
+
+.house-expenses {
+  overflow-y: scroll;
+  height: 25em;
+}

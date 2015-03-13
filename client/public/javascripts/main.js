@@ -157,13 +157,7 @@
     render: function() {
       var house = this.props.house;
       var users = this.state.house.users;
-      var roomieLabel = "";
-      if (users.length === 1) {
-        roomieLabel = "roomie:";
-      }
-      else {
-        roomieLabel = "roomies:"
-      }
+
       var userNodes = users.map(function(user) {
         return (
           <span title={user.first_name} key={user.id} >
@@ -175,14 +169,12 @@
         <div className="container">
           <div className="jumbotron">
             <div className="row">
-              <div className="col-sm-7">
-                <h1>{house.name}</h1>
-                <h3>{users.length} {roomieLabel}</h3>
-                {userNodes}
-              </div>
               <div className="col-sm-5">
-                <HouseExpenses houseId={house.id} />
+                <h2>{house.name} <span>{userNodes}</span></h2>
                 <ExpenseForm houseId={house.id} />
+              </div>
+              <div className="col-sm-7">
+                <HouseExpenses houseId={house.id} />
               </div>
             </div>
           </div>
@@ -249,7 +241,7 @@
         );
       });
       return (
-        <div className="list-group">
+        <div className="list-group house-expenses well">
           {expenseNodes}
         </div>
       );
