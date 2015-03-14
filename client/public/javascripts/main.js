@@ -105,7 +105,7 @@
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
               </button>
-              <a className="navbar-brand" href="#">roomies</a>
+              <a className="navbar-brand no-padding" href="#"><img src="/images/roomies-logo-inverse.png" /></a>
             </div>
 
 

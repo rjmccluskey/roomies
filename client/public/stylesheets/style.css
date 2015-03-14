@@ -43,3 +43,7 @@ img {
   overflow-y: scroll;
   height: 25em;
 }
+
+.navbar-inverse {
+  background-color: black;
+}
