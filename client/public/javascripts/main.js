@@ -48,8 +48,52 @@
   });
 
   var NavBar = React.createClass({
+    searchUsers: function(search) {
+      var $btn = $("#user-search-btn").button('loading');
+      var url = "/search"
+      $.ajax({
+        url: url,
+        dataType: "json",
+        data: {search: search},
+        success: function(data) {
+          this.replaceState(data);
+          $btn.button('reset');
+          $("#search-results").dropdown("toggle");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+          $btn.button('reset');
+        }.bind(this)
+      });
+    },
+    getInitialState: function() {
+      return (
+        {
+          users: [
+            {
+              id: "",
+              first_name:""
+            }
+          ]
+        }
+      );
+    },
     render: function() {
       var user = this.props.user;
+      var error = this.state.error;
+      var userNodes;
+      if (error) {
+        userNodes = error;
+      }
+      else {
+        userNodes = this.state.users.map(function(user) {
+          return (
+            <li className="search-result" key={user.id}>
+              <User user={user} />
+            </li>
+          );
+        });
+      };
       return (
         <nav className="navbar navbar-inverse navbar-fixed-top" >
           <div className="container">
@@ -67,10 +111,14 @@
 
             <div className="collapse navbar-collapse" id="navbar-collapse">
               <ul className="nav navbar-nav">
-                <li><a href="#">houses</a></li>
-                <li><a href="#">expenses</a></li>
+                <li className="dropdown">
+                  <UserSearchForm onUsersSearch={this.searchUsers}/>
+                  <div id="search-results" data-target="#" data-toggle="dropdown" aria-expanded="false" />
+                  <ul className="dropdown-menu medium-margin-left" role="menu" aria-labelledby="search-results">
+                    {userNodes}
+                  </ul>
+                </li>
               </ul>
-              <UserSearchForm />
               <ul className="nav navbar-nav navbar-right">
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle user-icon" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -93,14 +141,31 @@
   });
 
   var UserSearchForm = React.createClass({
+    handleSubmit: function(e) {
+      e.preventDefault();
+      var search = this.refs.search.getDOMNode().value.trim();
+      if (!search) {
+        return;
+      };
+      this.props.onUsersSearch(search);
+      this.refs.search.getDOMNode().value = '';
+    },
     render: function() {
       return (
-        <form className="navbar-form navbar-left" role="search">
+        <form className="navbar-form navbar-left" role="search" onSubmit={this.handleSubmit}>
           <div className="form-group">
-            <input type="text" className="form-control" placeholder="Search Users" />
+            <input type="text" className="form-control" placeholder="Search Users" ref="search" />
           </div>
-          <button type="submit" className="btn btn-default">Search</button>
+          <button type="submit" className="btn btn-default" id="user-search-btn" data-loading-text="Searching...">Search</button>
         </form>
+      );
+    }
+  });
+
+  var User = React.createClass({
+    render: function() {
+      return (
+        <p>{this.props.user.first_name}</p>
       );
     }
   });
