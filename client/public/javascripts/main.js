@@ -58,7 +58,9 @@
         success: function(data) {
           this.replaceState(data);
           $btn.button('reset');
-          $("#search-results").dropdown("toggle");
+          if ($('#search-results').attr('aria-expanded') === "false") {
+            $("#search-results").dropdown("toggle");
+          };
         }.bind(this),
         error: function(xhr, status, err) {
           console.error(url, status, err.toString());
@@ -72,7 +74,8 @@
           users: [
             {
               id: "",
-              first_name:""
+              first_name:"",
+              houses: []
             }
           ]
         }
@@ -164,8 +167,19 @@
 
   var User = React.createClass({
     render: function() {
+      var user = this.props.user;
       return (
-        <p>{this.props.user.first_name}</p>
+        <div className="user">
+          <img src={user.profile_picture_url} /><span> {this.props.user.first_name}</span>
+        </div>
+      );
+    }
+  });
+
+  var JoinHouseForm = React.createClass({
+    render: function() {
+      return (
+        <div/>
       );
     }
   });
