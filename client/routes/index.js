@@ -45,10 +45,10 @@ router.get('/search', function(req,res) {
 
         if (error) {
           req.flash('error', error);
-          res.render('search');
+          res.json(data);
         }
         else {
-          res.render('search', data);
+          res.json(data);
         }
       });
   }

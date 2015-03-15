@@ -74,10 +74,10 @@ router.post('/', function(req,res) {
 });
 
 /* Join a house */
-router.patch('/:house_id/join', function(req,res) {
+router.post('/:house_id/join', function(req,res) {
   var house_id = req.param('house_id')
 
-  rest.patch('http://localhost:3000/houses/' + house_id + '/join',
+  rest.post('http://localhost:3000/houses/' + house_id + '/join',
     {
       data: {
               'venmo_id': req.session.venmo_id,

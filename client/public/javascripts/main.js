@@ -48,8 +48,55 @@
   });
 
   var NavBar = React.createClass({
+    searchUsers: function(search) {
+      var $btn = $("#user-search-btn").button('loading');
+      var url = "/search"
+      $.ajax({
+        url: url,
+        dataType: "json",
+        data: {search: search},
+        success: function(data) {
+          this.replaceState(data);
+          $btn.button('reset');
+          if ($('#search-results').attr('aria-expanded') === "false") {
+            $("#search-results").dropdown("toggle");
+          };
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+          $btn.button('reset');
+        }.bind(this)
+      });
+    },
+    getInitialState: function() {
+      return (
+        {
+          users: [
+            {
+              id: "",
+              first_name:"",
+              houses: []
+            }
+          ]
+        }
+      );
+    },
     render: function() {
       var user = this.props.user;
+      var error = this.state.error;
+      var userNodes;
+      if (error) {
+        userNodes = error;
+      }
+      else {
+        userNodes = this.state.users.map(function(searchedUser) {
+          return (
+            <li className="search-result" key={searchedUser.id}>
+              <SearchedUser searchedUser={searchedUser} user={user} />
+            </li>
+          );
+        });
+      };
       return (
         <nav className="navbar navbar-inverse navbar-fixed-top" >
           <div className="container">
@@ -61,16 +108,20 @@
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
               </button>
-              <a className="navbar-brand" href="#">roomies</a>
+              <a className="navbar-brand no-padding" href="#"><img src="/images/roomies-logo-inverse.png" /></a>
             </div>
 
 
             <div className="collapse navbar-collapse" id="navbar-collapse">
               <ul className="nav navbar-nav">
-                <li><a href="#">houses</a></li>
-                <li><a href="#">expenses</a></li>
+                <li className="dropdown">
+                  <UserSearchForm onUsersSearch={this.searchUsers}/>
+                  <div id="search-results" data-target="#" data-toggle="dropdown" aria-expanded="false" />
+                  <ul className="dropdown-menu medium-margin-left" role="menu" aria-labelledby="search-results">
+                    {userNodes}
+                  </ul>
+                </li>
               </ul>
-              <UserSearchForm />
               <ul className="nav navbar-nav navbar-right">
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle user-icon" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -93,13 +144,108 @@
   });
 
   var UserSearchForm = React.createClass({
+    handleSubmit: function(e) {
+      e.preventDefault();
+      var search = this.refs.search.getDOMNode().value.trim();
+      if (!search) {
+        return;
+      };
+      this.props.onUsersSearch(search);
+      this.refs.search.getDOMNode().value = '';
+    },
     render: function() {
       return (
-        <form className="navbar-form navbar-left" role="search">
+        <form className="navbar-form navbar-left" role="search" onSubmit={this.handleSubmit}>
           <div className="form-group">
-            <input type="text" className="form-control" placeholder="Search Users" />
+            <input type="text" className="form-control" placeholder="Search Users" ref="search" />
           </div>
-          <button type="submit" className="btn btn-default">Search</button>
+          <button type="submit" className="btn btn-default" id="user-search-btn" data-loading-text="Searching...">Search</button>
+        </form>
+      );
+    }
+  });
+
+  var SearchedUser = React.createClass({
+    showModal: function(e) {
+      e.preventDefault();
+      $("#searched-user-modal" + this.props.searchedUser.id).modal("toggle");
+    },
+    render: function() {
+      var user = this.props.user;
+      var searchedUser = this.props.searchedUser;
+      return (
+        <div className="searched-user" >
+          <form onSubmit={this.showModal}>
+            <button type="submit" className="btn btn-default btn-block" data-toggle="modal" data-target={"searched-user-modal" + searchedUser.id}>
+              <img className="pull-left" src={searchedUser.profile_picture_url} /><h4>{searchedUser.first_name}</h4>
+            </button>
+          </form>
+          <SearchedUserModal searchedUser={searchedUser} user={user} />
+        </div>
+      );
+    }
+  });
+
+  var SearchedUserModal = React.createClass({
+    render: function() {
+      var user = this.props.user;
+      var searchedUser = this.props.searchedUser;
+      var houses = searchedUser.houses;
+      var totalHousesMessage = (houses.length === 1) ? "1 house":(houses.length + " houses");
+      var houseNodes = houses.map(function(house) {
+        var isAMember;
+        var joinHouseForm;
+        _.each(user.houses, function(loggedInUserHouse){
+          if (loggedInUserHouse.id === house.id) {
+            isAMember = true;
+          }
+        });
+        if (isAMember) {
+          joinHouseForm = <p>You are already a member of this house!</p>;
+        }
+        else {
+          joinHouseForm = <JoinHouseForm house={house} onJoinHouse={this.joinHouse} />;
+        };
+        return (
+          <div className="house-node" key={house.id}>
+            <h4>{house.name}</h4>
+            {joinHouseForm}
+          </div>
+        );
+      });
+      return (
+        <div className="modal fade" id={"searched-user-modal" + searchedUser.id} tabIndex="-1" role="dialog" aria-labelledby="searchedUserModal" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 className="modal-title" id="searchedUserModal">{searchedUser.display_name}</h3>
+              </div>
+              <div className="modal-body">
+                <h4>{searchedUser.first_name} belongs to {totalHousesMessage}:</h4>
+                {houseNodes}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var JoinHouseForm = React.createClass({
+    // TODO: form needs to actually join the user to the house
+    handleSubmit: function(e) {
+      e.preventDefault();
+    },
+    render: function() {
+      var house = this.props.house;
+      return (
+        <form className="form-inline" onSubmit={this.handleSubmit}>
+          <div className="form-group">
+            <label className="sr-only" htmlFor="house-password">Password</label>
+            <input type="password" className="form-control" id="house-password" placeholder="Enter password" ref="password" />
+          </div>
+          <button type="submit" id={"join-house-btn" + house.id} className="btn btn-default">Join house</button>
         </form>
       );
     }
@@ -279,11 +425,13 @@
       var expenseId = "expense-charges" + expense.id;
       var numPending = expense.charges.length;
       var expenseStatus = "btn-warning"
-      for (var i = 0; i < expense.charges.length; i++) {
-        if (expense.charges[i].date_completed) {
+
+      _.each(expense.charges, function(charge) {
+        if (charge.date_completed) {
           numPending--;
-        }
-      };
+        };
+      });
+
       if (numPending === 0) {
         expenseStatus = "btn-success";
       };
