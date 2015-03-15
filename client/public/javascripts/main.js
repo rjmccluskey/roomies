@@ -166,22 +166,8 @@
   });
 
   var SearchedUser = React.createClass({
-    loadHousesFromServer: function(e) {
+    showModal: function(e) {
       e.preventDefault();
-      var url = "/"
-      $.ajax({
-        url: "/users",
-        dataType: 'json',
-        success: function(data) {
-          this.setState({data: data});
-        }.bind(this),
-        error: function(xhr, status, err) {
-          console.error("/users", status, err.toString());
-        }.bind(this)
-      });
-      this.showModal();
-    },
-    showModal: function() {
       $("#searched-user-modal" + this.props.searchedUser.id).modal("toggle");
     },
     render: function() {
@@ -189,7 +175,7 @@
       var searchedUser = this.props.searchedUser;
       return (
         <div className="searched-user" >
-          <form onSubmit={this.loadHousesFromServer}>
+          <form onSubmit={this.showModal}>
             <button type="submit" className="btn btn-default btn-block" data-toggle="modal" data-target={"searched-user-modal" + searchedUser.id}>
               <img className="pull-left" src={searchedUser.profile_picture_url} /><h4>{searchedUser.first_name}</h4>
             </button>
@@ -218,7 +204,7 @@
           joinHouseForm = <p>You are already a member of this house!</p>;
         }
         else {
-          joinHouseForm = <JoinHouseForm house={house} />;
+          joinHouseForm = <JoinHouseForm house={house} onJoinHouse={this.joinHouse} />;
         };
         return (
           <div className="house-node" key={house.id}>
@@ -247,14 +233,14 @@
   });
 
   var JoinHouseForm = React.createClass({
-    joinHouse: function(e) {
+    handleSubmit: function(e) {
       e.preventDefault();
-      var house = this.props.house;
+
     },
     render: function() {
       var house = this.props.house;
       return (
-        <form className="form-inline" onSubmit={this.joinHouse}>
+        <form className="form-inline" onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label className="sr-only" htmlFor="house-password">Password</label>
             <input type="password" className="form-control" id="house-password" placeholder="Enter password" ref="password" />
