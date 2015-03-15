@@ -29,15 +29,7 @@
       this.loadUserFromServer();
     },
     render: function() {
-      return (
-        <AllRoomieElements data={this.state.data} />
-      );
-    }
-  });
-
-  var AllRoomieElements = React.createClass({
-    render: function() {
-      var data = this.props.data;
+      var data = this.state.data;
       return (
         <div className="roomiesApp">
           <NavBar user={data.user} />
