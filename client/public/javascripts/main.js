@@ -89,10 +89,10 @@
         userNodes = error;
       }
       else {
-        userNodes = this.state.users.map(function(user) {
+        userNodes = this.state.users.map(function(searchedUser) {
           return (
-            <li className="search-result" key={user.id}>
-              <User user={user} />
+            <li className="search-result" key={searchedUser.id}>
+              <SearchedUser searchedUser={searchedUser} user={user} />
             </li>
           );
         });
@@ -165,21 +165,102 @@
     }
   });
 
-  var User = React.createClass({
+  var SearchedUser = React.createClass({
+    loadHousesFromServer: function(e) {
+      e.preventDefault();
+      var url = "/"
+      $.ajax({
+        url: "/users",
+        dataType: 'json',
+        success: function(data) {
+          this.setState({data: data});
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error("/users", status, err.toString());
+        }.bind(this)
+      });
+      this.showModal();
+    },
+    showModal: function() {
+      $("#searched-user-modal" + this.props.searchedUser.id).modal("toggle");
+    },
     render: function() {
       var user = this.props.user;
+      var searchedUser = this.props.searchedUser;
       return (
-        <div className="user">
-          <img src={user.profile_picture_url} /><span> {this.props.user.first_name}</span>
+        <div className="searched-user" >
+          <form onSubmit={this.loadHousesFromServer}>
+            <button type="submit" className="btn btn-default btn-block" data-toggle="modal" data-target={"searched-user-modal" + searchedUser.id}>
+              <img className="pull-left" src={searchedUser.profile_picture_url} /><h4>{searchedUser.first_name}</h4>
+            </button>
+          </form>
+          <SearchedUserModal searchedUser={searchedUser} user={user} />
+        </div>
+      );
+    }
+  });
+
+  var SearchedUserModal = React.createClass({
+    render: function() {
+      var user = this.props.user;
+      var searchedUser = this.props.searchedUser;
+      var houses = searchedUser.houses;
+      var totalHousesMessage = (houses.length === 1) ? "1 house":(houses.length + " houses");
+      var houseNodes = houses.map(function(house) {
+        var isAMember;
+        var joinHouseForm;
+        _.each(user.houses, function(loggedInUserHouse){
+          if (loggedInUserHouse.id === house.id) {
+            isAMember = true;
+          }
+        });
+        if (isAMember) {
+          joinHouseForm = <p>You are already a member of this house!</p>;
+        }
+        else {
+          joinHouseForm = <JoinHouseForm house={house} />;
+        };
+        return (
+          <div className="house-node" key={house.id}>
+            <h4>{house.name}</h4>
+            {joinHouseForm}
+          </div>
+        );
+      });
+      return (
+        <div className="modal fade" id={"searched-user-modal" + searchedUser.id} tabIndex="-1" role="dialog" aria-labelledby="searchedUserModal" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 className="modal-title" id="searchedUserModal">{searchedUser.display_name}</h3>
+              </div>
+              <div className="modal-body">
+                <h4>{searchedUser.first_name} belongs to {totalHousesMessage}:</h4>
+                {houseNodes}
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
   });
 
   var JoinHouseForm = React.createClass({
+    joinHouse: function(e) {
+      e.preventDefault();
+      var house = this.props.house;
+    },
     render: function() {
+      var house = this.props.house;
       return (
-        <div/>
+        <form className="form-inline" onSubmit={this.joinHouse}>
+          <div className="form-group">
+            <label className="sr-only" htmlFor="house-password">Password</label>
+            <input type="password" className="form-control" id="house-password" placeholder="Enter password" ref="password" />
+          </div>
+          <button type="submit" id={"join-house-btn" + house.id} className="btn btn-default">Join house</button>
+        </form>
       );
     }
   });
@@ -358,11 +439,13 @@
       var expenseId = "expense-charges" + expense.id;
       var numPending = expense.charges.length;
       var expenseStatus = "btn-warning"
-      for (var i = 0; i < expense.charges.length; i++) {
-        if (expense.charges[i].date_completed) {
+
+      _.each(expense.charges, function(charge) {
+        if (charge.date_completed) {
           numPending--;
-        }
-      };
+        };
+      });
+
       if (numPending === 0) {
         expenseStatus = "btn-success";
       };
