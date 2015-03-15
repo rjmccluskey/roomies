@@ -233,9 +233,9 @@
   });
 
   var JoinHouseForm = React.createClass({
+    // TODO: form needs to actually join the user to the house
     handleSubmit: function(e) {
       e.preventDefault();
-
     },
     render: function() {
       var house = this.props.house;
