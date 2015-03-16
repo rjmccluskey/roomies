@@ -1,46 +1,23 @@
 (function(){
   var RoomiesApp = React.createClass({
+    mergeNewState: function(key, value) {
+      var newState = _.extend({}, this.state);
+      newState.data[key] = value;
+      this.setState(newState);
+    },
     loadUserFromServer: function() {
       $.ajax({
         url: "/users",
         dataType: 'json',
         success: function(data) {
-          this.setState({data: data});
+          this.mergeNewState("user", data.user);
         }.bind(this),
         error: function(xhr, status, err) {
           console.error("/users", status, err.toString());
         }.bind(this)
       });
     },
-    getInitialState: function() {
-      return (
-        {
-          data: {
-            user: {
-              first_name: "",
-              profile_picture_url: "",
-              houses: []
-            }
-          }
-        }
-      );
-    },
-    componentDidMount: function() {
-      this.loadUserFromServer();
-    },
-    render: function() {
-      var data = this.state.data;
-      return (
-        <div className="roomiesApp">
-          <NavBar user={data.user} />
-          <UserHouses houses={data.user.houses} />
-        </div>
-      );
-    }
-  });
-
-  var NavBar = React.createClass({
-    searchUsers: function(search) {
+    searchUsersFromServer: function(search) {
       var $btn = $("#user-search-btn").button('loading');
       var url = "/search"
       $.ajax({
@@ -48,7 +25,7 @@
         dataType: "json",
         data: {search: search},
         success: function(data) {
-          this.replaceState(data);
+          this.mergeNewState("searchedUsers", data.users);
           $btn.button('reset');
           if ($('#search-results').attr('aria-expanded') === "false") {
             $("#search-results").dropdown("toggle");
@@ -63,25 +40,48 @@
     getInitialState: function() {
       return (
         {
-          users: [
-            {
-              id: "",
-              first_name:"",
+          data: {
+            user: {
+              first_name: "",
+              profile_picture_url: "",
               houses: []
-            }
-          ]
+            },
+            searchedUsers: [
+              {
+                id: "",
+                first_name: "",
+                houses: []
+              }
+            ]
+          }
         }
       );
     },
+    componentDidMount: function() {
+      this.loadUserFromServer();
+    },
+    render: function() {
+      var data = this.state.data;
+      console.log(data)
+      return (
+        <div className="roomiesApp">
+          <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} />
+          <UserHouses houses={data.user.houses} />
+        </div>
+      );
+    }
+  });
+
+  var NavBar = React.createClass({
     render: function() {
       var user = this.props.user;
-      var error = this.state.error;
-      var userNodes;
+      var error = this.props.error;
+      var searchedUserNodes;
       if (error) {
-        userNodes = error;
+        searchedUserNodes = error;
       }
       else {
-        userNodes = this.state.users.map(function(searchedUser) {
+        searchedUserNodes = this.props.searchedUsers.map(function(searchedUser) {
           return (
             <li className="search-result" key={searchedUser.id}>
               <SearchedUser searchedUser={searchedUser} user={user} />
@@ -107,10 +107,10 @@
             <div className="collapse navbar-collapse" id="navbar-collapse">
               <ul className="nav navbar-nav">
                 <li className="dropdown">
-                  <UserSearchForm onUsersSearch={this.searchUsers}/>
+                  <UserSearchForm onUserSearchFormSubmit={this.props.onSearchUsers}/>
                   <div id="search-results" data-target="#" data-toggle="dropdown" aria-expanded="false" />
                   <ul className="dropdown-menu medium-margin-left" role="menu" aria-labelledby="search-results">
-                    {userNodes}
+                    {searchedUserNodes}
                   </ul>
                 </li>
               </ul>
@@ -142,7 +142,7 @@
       if (!search) {
         return;
       };
-      this.props.onUsersSearch(search);
+      this.props.onUserSearchFormSubmit(search);
       this.refs.search.getDOMNode().value = '';
     },
     render: function() {
