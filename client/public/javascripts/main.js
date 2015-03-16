@@ -71,7 +71,7 @@
       console.log(data)
       return (
         <div className="roomiesApp">
-          <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} onJoinHouse={this.loadUserFromServer} />
+          <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} onChange={this.loadUserFromServer} />
           <UserHouses houses={data.user.houses} />
         </div>
       );
@@ -90,7 +90,7 @@
         searchedUserNodes = this.props.searchedUsers.map(function(searchedUser) {
           return (
             <li className="search-result" key={searchedUser.id}>
-              <SearchedUser searchedUser={searchedUser} user={user} onJoinHouse={this.props.onJoinHouse} />
+              <SearchedUser searchedUser={searchedUser} user={user} onJoinHouse={this.props.onChange} />
             </li>
           );
         }.bind(this));
