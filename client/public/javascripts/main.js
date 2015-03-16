@@ -65,7 +65,7 @@
       console.log(data)
       return (
         <div className="roomiesApp">
-          <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} />
+          <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} onJoinHouse={this.loadUserFromServer} />
           <UserHouses houses={data.user.houses} />
         </div>
       );
@@ -84,10 +84,10 @@
         searchedUserNodes = this.props.searchedUsers.map(function(searchedUser) {
           return (
             <li className="search-result" key={searchedUser.id}>
-              <SearchedUser searchedUser={searchedUser} user={user} />
+              <SearchedUser searchedUser={searchedUser} user={user} onJoinHouse={this.props.onJoinHouse} />
             </li>
           );
-        });
+        }.bind(this));
       };
       return (
         <nav className="navbar navbar-inverse navbar-fixed-top" >
@@ -172,7 +172,7 @@
               <img className="pull-left" src={searchedUser.profile_picture_url} /><h4>{searchedUser.first_name}</h4>
             </button>
           </form>
-          <SearchedUserModal searchedUser={searchedUser} user={user} />
+          <SearchedUserModal searchedUser={searchedUser} user={user} onJoinHouse={this.props.onJoinHouse} />
         </div>
       );
     }
@@ -196,7 +196,7 @@
           joinHouseForm = <p>You are already a member of this house!</p>;
         }
         else {
-          joinHouseForm = <JoinHouseForm house={house} onJoinHouse={this.joinHouse} />;
+          joinHouseForm = <JoinHouseForm house={house} onSuccessfulJoin={this.props.onJoinHouse} />;
         };
         return (
           <div className="house-node" key={house.id}>
@@ -204,7 +204,7 @@
             {joinHouseForm}
           </div>
         );
-      });
+      }.bind(this));
       return (
         <div className="modal fade" id={"searched-user-modal" + searchedUser.id} tabIndex="-1" role="dialog" aria-labelledby="searchedUserModal" aria-hidden="true">
           <div className="modal-dialog">
@@ -228,6 +228,26 @@
     // TODO: form needs to actually join the user to the house
     handleSubmit: function(e) {
       e.preventDefault();
+      var house = this.props.house;
+      var url = "/houses/" + house.id + "/join";
+      var $btn = $("#join-house-btn" + house.id).button('loading');
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        type: 'POST',
+        data: {password: this.refs.password.getDOMNode().value.trim()},
+        success: function(data) {
+          if (data.house) {
+            this.props.onSuccessfulJoin();
+            console.log("successfuly joined " + data.house.name + "!");
+          }
+          $btn.button("reset");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error("/expenses", status, err.toString());
+          $btn.button("reset");
+        }.bind(this)
+      });
     },
     render: function() {
       var house = this.props.house;
