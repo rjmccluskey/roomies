@@ -37,6 +37,12 @@
         }.bind(this)
       });
     },
+    sendErrorNotification: function(error) {
+      var node = error.node;
+      var message = error.message;
+      this.mergeNewState("error", error.message);
+      // node.append($("#error-alert"));
+    },
     getInitialState: function() {
       return (
         {
@@ -179,6 +185,13 @@
   });
 
   var SearchedUserModal = React.createClass({
+    getInitialState: function() {
+      return {recentlyJoinedHouseId: ""};
+    },
+    handleSuccessfulJoin: function(houseId) {
+      this.props.onJoinHouse();
+      this.setState({recentlyJoinedHouseId: houseId});
+    },
     render: function() {
       var user = this.props.user;
       var searchedUser = this.props.searchedUser;
@@ -192,16 +205,21 @@
             isAMember = true;
           }
         });
-        if (isAMember) {
+        if (this.state.recentlyJoinedHouseId === house.id) {
+          joinHouseForm = <p className="text-success">Successfully joined!</p>
+        }
+        else if (isAMember) {
           joinHouseForm = <p>You are already a member of this house!</p>;
         }
         else {
-          joinHouseForm = <JoinHouseForm house={house} onSuccessfulJoin={this.props.onJoinHouse} />;
+          joinHouseForm = <JoinHouseForm house={house} onSuccessfulJoin={this.handleSuccessfulJoin} />;
         };
         return (
           <div className="house-node" key={house.id}>
             <h4>{house.name}</h4>
-            {joinHouseForm}
+            <div id={"join-house-form" + house.id}>
+              {joinHouseForm}
+            </div>
           </div>
         );
       }.bind(this));
@@ -214,6 +232,7 @@
                 <h3 className="modal-title" id="searchedUserModal">{searchedUser.display_name}</h3>
               </div>
               <div className="modal-body">
+                <div id="searched-user-modal-error" />
                 <h4>{searchedUser.first_name} belongs to {totalHousesMessage}:</h4>
                 {houseNodes}
               </div>
@@ -225,7 +244,9 @@
   });
 
   var JoinHouseForm = React.createClass({
-    // TODO: form needs to actually join the user to the house
+    getInitialState: function() {
+      return {error: ""};
+    },
     handleSubmit: function(e) {
       e.preventDefault();
       var house = this.props.house;
@@ -238,26 +259,43 @@
         data: {password: this.refs.password.getDOMNode().value.trim()},
         success: function(data) {
           if (data.house) {
-            this.props.onSuccessfulJoin();
+            this.props.onSuccessfulJoin(house.id);
             console.log("successfuly joined " + data.house.name + "!");
+          }
+          else if (data.error) {
+            this.setState({error: data.error});
           }
           $btn.button("reset");
         }.bind(this),
         error: function(xhr, status, err) {
-          console.error("/expenses", status, err.toString());
+          console.error(url, status, err.toString());
           $btn.button("reset");
         }.bind(this)
       });
+      this.refs.password.getDOMNode().value = "";
     },
     render: function() {
       var house = this.props.house;
+      var error = this.state.error;
+      var hasError;
+      var errorNode;
+      if (error) {
+        hasError = true;
+        errorNode = <p className="text-danger">{error}</p>;
+      }
+      var cx = React.addons.classSet;
+      var classes = cx({
+        "form-group": true,
+        "has-error": hasError
+      });
       return (
         <form className="form-inline" onSubmit={this.handleSubmit}>
-          <div className="form-group">
+          <div className={classes}>
             <label className="sr-only" htmlFor="house-password">Password</label>
             <input type="password" className="form-control" id="house-password" placeholder="Enter password" ref="password" />
           </div>
           <button type="submit" id={"join-house-btn" + house.id} className="btn btn-default">Join house</button>
+          {errorNode}
         </form>
       );
     }
