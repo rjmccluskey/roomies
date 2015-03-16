@@ -86,13 +86,7 @@ router.post('/:house_id/join', function(req,res) {
     }
   )
   .on('complete', function(data) {
-    if (data.errors) {
-      req.flash('errors', data.errors)
-      res.redirect('/houses/' + house_id)
-    }
-    else {
-      res.redirect('/houses/' + house_id)
-    }
+    res.json(data);
   });
 });
 
