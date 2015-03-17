@@ -101,14 +101,7 @@ router.post('/:house_id/expenses', function(req,res) {
           }
   })
   .on('complete', function(data) {
-    if (data.errors) {
-      req.flash('errors', data.errors)
-      res.redirect('/houses/' + house_id);
-    }
-    else {
-      req.flash('expense', 'Expense added!')
-      res.redirect('/houses/' + house_id);
-    }
+    res.json(data);
   });
 });
 

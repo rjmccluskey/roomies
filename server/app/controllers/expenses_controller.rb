@@ -22,17 +22,25 @@ class ExpensesController < ApplicationController
         unless roomie == user
           venmo_api = Venmo::Payments.new(access_token, roomie.venmo_id)
           p venmo_response = venmo_api.charge(charge_amount, note)
-          venmo_payment_info = venmo_response["data"]["payment"]
-
-          p Charge.create(venmo_payment_id: venmo_payment_info["id"],
-                        amount: venmo_payment_info["amount"],
-                        note: note,
-                        status: venmo_payment_info["status"],
-                        expense_id: @expense.id,
-                        user_id: roomie.id)
+          venmo_payment_info = {}
+          unless venmo_response["error"]
+            venmo_payment_info = venmo_response["data"]["payment"]
+            p Charge.create(venmo_payment_id: venmo_payment_info["id"],
+                          amount: venmo_payment_info["amount"],
+                          note: note,
+                          status: venmo_payment_info["status"],
+                          expense_id: @expense.id,
+                          user_id: roomie.id,
+                          date_completed: venmo_payment_info["date_completed"])
+          end
         end
       end
-      render json: expense_json_response
+      if @expense.charges.count > 0
+        render json: expense_json_response
+      else
+        @expense.destroy
+        render json: {errors: ["There was a problem creating the charges!"]}
+      end
     else
       render json: {errors: ['Expense invalid']}
     end
