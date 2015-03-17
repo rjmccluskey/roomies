@@ -28,6 +28,9 @@ module Venmo
     base_uri "https://api.venmo.com/v1"
 
     def initialize(access_token, venmo_id)
+      if venmo_id == "145434160922624933"             # check if test user
+        self.class.base_uri "https://sandbox-api.venmo.com/v1"
+      end
       @options = {
         body: {
           "access_token" => access_token,

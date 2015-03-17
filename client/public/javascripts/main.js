@@ -364,6 +364,7 @@
         type: 'POST',
         data: {house_id: houseId, amount_string: amount, note: description},
         success: function(data) {
+          console.log(data);
           this.loadExpensesFromServer();
           $btn.button("reset");
         }.bind(this),
