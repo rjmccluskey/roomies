@@ -68,7 +68,6 @@
     },
     render: function() {
       var data = this.state.data;
-      console.log(data)
       return (
         <div className="roomiesApp">
           <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} onChange={this.loadUserFromServer} />
@@ -285,7 +284,6 @@
         type: 'POST',
         data: {name: name, password: password, password_confirmation: password_confirmation},
         success: function(data) {
-          console.log(data);
           if (data.errors) {
             this.setState(data);
           }
@@ -390,7 +388,6 @@
         success: function(data) {
           if (data.house) {
             this.props.onSuccessfulJoin(house.id);
-            console.log("successfuly joined " + data.house.name + "!");
           }
           else if (data.error) {
             this.setState({error: data.error});
@@ -494,7 +491,6 @@
         type: 'POST',
         data: {house_id: houseId, amount_string: amount, note: description},
         success: function(data) {
-          console.log(data);
           this.loadExpensesFromServer();
           $btn.button("reset");
         }.bind(this),
