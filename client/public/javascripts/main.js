@@ -79,6 +79,10 @@
   });
 
   var NavBar = React.createClass({
+    showNewHouseModal: function(e) {
+      e.preventDefault();
+      $('#new-house-modal').modal('show');
+    },
     render: function() {
       var user = this.props.user;
       var error = this.props.error;
@@ -121,6 +125,10 @@
                 </li>
               </ul>
               <ul className="nav navbar-nav navbar-right">
+                <li>
+                  <a href="#" onClick={this.showNewHouseModal}>New house</a>
+                  <NewHouseModal user={user} />
+                </li>
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle user-icon" data-toggle="dropdown" role="button" aria-expanded="false">
                     <img src={user.profile_picture_url} />
@@ -235,6 +243,31 @@
                 <div id="searched-user-modal-error" />
                 <h4>{searchedUser.first_name} belongs to {totalHousesMessage}:</h4>
                 {houseNodes}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var NewHouseModal = React.createClass({
+    render: function() {
+      var user = this.props.user;
+      return (
+        <div className="modal fade" id="new-house-modal" tabIndex="-1" role="dialog" aria-labelledby="new-house-modal-label" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 className="modal-title" id="new-house-modal-label">Create a new house</h4>
+              </div>
+              <div className="modal-body">
+                ...
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary">Create house</button>
               </div>
             </div>
           </div>
