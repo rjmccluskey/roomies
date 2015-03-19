@@ -62,14 +62,7 @@ router.post('/', function(req,res) {
       }
     )
     .on('complete', function(data) {
-      if (data.errors) {
-        req.flash('errors', data.errors);
-        res.redirect('/');
-      }
-      else {
-        req.flash('success', 'Created house: ' + name)
-        res.redirect('/')
-      }
+      res.json(data);
     });
 });
 

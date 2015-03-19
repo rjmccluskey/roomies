@@ -68,7 +68,6 @@
     },
     render: function() {
       var data = this.state.data;
-      console.log(data)
       return (
         <div className="roomiesApp">
           <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} onChange={this.loadUserFromServer} />
@@ -79,6 +78,10 @@
   });
 
   var NavBar = React.createClass({
+    showNewHouseModal: function(e) {
+      e.preventDefault();
+      $('#new-house-modal').modal('show');
+    },
     render: function() {
       var user = this.props.user;
       var error = this.props.error;
@@ -121,6 +124,10 @@
                 </li>
               </ul>
               <ul className="nav navbar-nav navbar-right">
+                <li>
+                  <a href="#" onClick={this.showNewHouseModal}>New house</a>
+                  <NewHouseModal user={user} onCreateHouse={this.props.onChange} />
+                </li>
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle user-icon" data-toggle="dropdown" role="button" aria-expanded="false">
                     <img src={user.profile_picture_url} />
@@ -243,6 +250,127 @@
     }
   });
 
+  var NewHouseModal = React.createClass({
+    resetForm: function() {
+      this.refs.name.getDOMNode().value = '';
+      this.refs.password.getDOMNode().value = '';
+      this.refs.password_confirmation.getDOMNode().value = '';
+      this.setState({errors:[]});
+    },
+    getInitialState: function() {
+      return (
+        {
+          errors: {
+            name: [],
+            password: [],
+            password_confirmation: []
+          }
+        }
+      );
+    },
+    handleNewHouseCreation: function(e) {
+      e.preventDefault();
+      var name = this.refs.name.getDOMNode().value.trim();
+      var password = this.refs.password.getDOMNode().value.trim();
+      var password_confirmation = this.refs.password_confirmation.getDOMNode().value.trim();
+      if (!name || !password || !password_confirmation) {
+        return;
+      }
+      var $btn = $('#create-new-house-btn').button('loading');
+      var url = "/houses"
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        type: 'POST',
+        data: {name: name, password: password, password_confirmation: password_confirmation},
+        success: function(data) {
+          if (data.errors) {
+            this.setState(data);
+          }
+          else {
+            this.props.onCreateHouse();
+            $('#new-house-modal').modal('hide');
+            this.resetForm();
+          };
+          $btn.button("reset");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+          $btn.button("reset");
+        }.bind(this)
+      });
+    },
+    render: function() {
+      var user = this.props.user;
+      var errors = this.state.errors;
+      var errorCount = 0;
+      var errorNodes = _.mapObject(errors, function(val, key) {
+        return (
+          val.map(function(errorMsg) {
+            errorCount ++
+            return <p className="text-danger" key={errorCount}>{errorMsg}</p>;
+          })
+        );
+      });
+      var nameErrorNodes = errorNodes.name;
+      var passwordErrorNodes = errorNodes.password;
+      var passwordConfirmationErrorNodes = errorNodes.password_confirmation;
+
+      var hasErrors = function(errorNodes) {
+        if (errorNodes && errorNodes.length > 0) {
+          return true;
+        };
+      };
+      var cx = React.addons.classSet;
+      var nameClasses = cx({
+        "form-group": true,
+        "has-error": hasErrors(nameErrorNodes)
+      });
+      var passwordClasses = cx({
+        "form-group": true,
+        "has-error": hasErrors(passwordErrorNodes)
+      });
+      var passwordConfirmationClasses = cx({
+        "form-group": true,
+        "has-error": hasErrors(passwordConfirmationErrorNodes)
+      });
+
+      return (
+        <div className="modal fade" id="new-house-modal" tabIndex="-1" role="dialog" aria-labelledby="new-house-modal-label" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" onClick={this.resetForm}>&times;</span></button>
+                <h4 className="modal-title" id="new-house-modal-label">Create a new house</h4>
+              </div>
+              <div className="modal-body">
+                <div className={nameClasses}>
+                  <label htmlFor="new-house-name-input">Name your house:</label>
+                  <input type="text" className="form-control" id="new-house-name-input" ref="name" />
+                  {nameErrorNodes}
+                </div>
+                <div className={passwordClasses}>
+                  <label htmlFor="new-house-password-input">Choose a password:</label>
+                  <input type="password" className="form-control" id="new-house-password-input" ref="password" />
+                  {passwordErrorNodes}
+                </div>
+                <div className={passwordConfirmationClasses}>
+                  <label htmlFor="new-house-password-confirmation-input">Confirm your password:</label>
+                  <input type="password" className="form-control" id="new-house-password-confirmation-input" ref="password_confirmation" />
+                  {passwordConfirmationErrorNodes}
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-default" data-dismiss="modal" onClick={this.resetForm}>Close</button>
+                <button type="button" onClick={this.handleNewHouseCreation} className="btn btn-primary" id="create-new-house-btn" data-loading-text="Creating...">Create house</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  });
+
   var JoinHouseForm = React.createClass({
     getInitialState: function() {
       return {error: ""};
@@ -260,7 +388,6 @@
         success: function(data) {
           if (data.house) {
             this.props.onSuccessfulJoin(house.id);
-            console.log("successfuly joined " + data.house.name + "!");
           }
           else if (data.error) {
             this.setState({error: data.error});
@@ -364,7 +491,6 @@
         type: 'POST',
         data: {house_id: houseId, amount_string: amount, note: description},
         success: function(data) {
-          console.log(data);
           this.loadExpensesFromServer();
           $btn.button("reset");
         }.bind(this),
