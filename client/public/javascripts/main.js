@@ -318,12 +318,25 @@
       var passwordErrorNodes = errorNodes.password;
       var passwordConfirmationErrorNodes = errorNodes.password_confirmation;
 
+      var hasErrors = function(errorNodes) {
+        if (errorNodes && errorNodes.length > 0) {
+          return true;
+        };
+      };
+      var cx = React.addons.classSet;
+      var nameClasses = cx({
+        "form-group": true,
+        "has-error": hasErrors(nameErrorNodes)
+      });
+      var passwordClasses = cx({
+        "form-group": true,
+        "has-error": hasErrors(passwordErrorNodes)
+      });
+      var passwordConfirmationClasses = cx({
+        "form-group": true,
+        "has-error": hasErrors(passwordConfirmationErrorNodes)
+      });
 
-      // var cx = React.addons.classSet;
-      // var nameClasses = cx({
-      //   "form-group": true,
-      //   "has-error": hasNameError
-      // });
       return (
         <div className="modal fade" id="new-house-modal" tabIndex="-1" role="dialog" aria-labelledby="new-house-modal-label" aria-hidden="true">
           <div className="modal-dialog">
@@ -333,17 +346,17 @@
                 <h4 className="modal-title" id="new-house-modal-label">Create a new house</h4>
               </div>
               <div className="modal-body">
-                <div className="form-group">
+                <div className={nameClasses}>
                   <label htmlFor="new-house-name-input">Name your house:</label>
                   <input type="text" className="form-control" id="new-house-name-input" ref="name" />
                   {nameErrorNodes}
                 </div>
-                <div className="form-group">
+                <div className={passwordClasses}>
                   <label htmlFor="new-house-password-input">Choose a password:</label>
                   <input type="password" className="form-control" id="new-house-password-input" ref="password" />
                   {passwordErrorNodes}
                 </div>
-                <div className="form-group">
+                <div className={passwordConfirmationClasses}>
                   <label htmlFor="new-house-password-confirmation-input">Confirm your password:</label>
                   <input type="password" className="form-control" id="new-house-password-confirmation-input" ref="password_confirmation" />
                   {passwordConfirmationErrorNodes}
