@@ -25,7 +25,12 @@
         dataType: "json",
         data: {search: search},
         success: function(data) {
-          this.mergeNewState("searchedUsers", data.users);
+          if (data.users) {
+            this.mergeNewState("searchedUsers", data.users);
+          }
+          else {
+            this.mergeNewState("searchedUsers", []);
+          };
           $btn.button('reset');
           if ($('#search-results').attr('aria-expanded') === "false") {
             $("#search-results").dropdown("toggle");
@@ -36,12 +41,6 @@
           $btn.button('reset');
         }.bind(this)
       });
-    },
-    sendErrorNotification: function(error) {
-      var node = error.node;
-      var message = error.message;
-      this.mergeNewState("error", error.message);
-      // node.append($("#error-alert"));
     },
     getInitialState: function() {
       return (
@@ -84,13 +83,13 @@
     },
     render: function() {
       var user = this.props.user;
-      var error = this.props.error;
+      var searchedUsers = this.props.searchedUsers
       var searchedUserNodes;
-      if (error) {
-        searchedUserNodes = error;
+      if (searchedUsers.length === 0) {
+        searchedUserNodes = <p className="text-danger">User not found!</p>;
       }
       else {
-        searchedUserNodes = this.props.searchedUsers.map(function(searchedUser) {
+        searchedUserNodes = searchedUsers.map(function(searchedUser) {
           return (
             <li className="search-result" key={searchedUser.id}>
               <SearchedUser searchedUser={searchedUser} user={user} onJoinHouse={this.props.onChange} />
