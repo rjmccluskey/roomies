@@ -47,7 +47,7 @@ class ExpensesController < ApplicationController
 
   end
 
-  private
+  protected
 
   def permit_params
     params.permit(:amount_string, :venmo_id, :house_id, :note)

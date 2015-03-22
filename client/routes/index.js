@@ -1,23 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var rest = require('restler');
+var headers = {'Authentication': 'Token token=' + process.env.ROOMIES_SECRET};
 
 router.get('/', function(req, res) {
   venmo_id = req.session.venmo_id
 
   if (venmo_id) {
-    // rest
-    //   .get('http://localhost:3000/users/' + venmo_id)
-    //   .on('complete', function(data) {
-    //     if (data.error === 'User not found') {
-    //       req.session.venmo_id = '';
-    //       req.session.access_token = '';
-    //       res.redirect('/');
-    //     }
-    //     else {
-    //       res.render('index', data)
-    //     }
-    //   });
     res.sendfile('views/index.html');
   }
   else {
@@ -38,7 +27,8 @@ router.get('/search', function(req,res) {
   if (req.session.venmo_id) {
     rest
       .get('http://localhost:3000/users/search', {
-        data: {search: req.param('search')}
+        data: {search: req.param('search')},
+        headers: headers
       })
       .on('complete', function(data) {
         var error = data.error;

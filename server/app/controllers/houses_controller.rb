@@ -51,7 +51,7 @@ class HousesController < ApplicationController
     end
   end
 
-  private
+  protected
 
   def permit_params
     params.permit(:id, :house_id, :venmo_id, :name, :password, :password_confirmation)

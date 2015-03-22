@@ -1,13 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var rest = require('restler');
-
+var headers = {'Authentication': 'Token token=' + process.env.ROOMIES_SECRET};
 
 /* Show a house */
 router.get('/:house_id', function(req,res) {
   if (req.session.venmo_id) {
     rest
-      .get('http://localhost:3000/houses/' + req.param('house_id'))
+      .get('http://localhost:3000/houses/' + req.param('house_id'), {
+        headers: headers
+      })
       .on('complete', function(data) {
         var errors = data.errors;
         var users = data.house.users;
@@ -37,7 +39,9 @@ router.get('/:house_id', function(req,res) {
 
 router.get('/:house_id/expenses', function(req, res) {
   rest
-    .get('http://localhost:3000/houses/' + req.param('house_id') + '/expenses')
+    .get('http://localhost:3000/houses/' + req.param('house_id') + '/expenses', {
+      headers: headers
+    })
     .on('complete', function(data) {
       res.json(data);
     });
@@ -58,7 +62,8 @@ router.post('/', function(req,res) {
                 'name': name,
                 'password': password,
                 'password_confirmation': password_confirmation
-              }
+              },
+        headers: headers
       }
     )
     .on('complete', function(data) {
@@ -75,7 +80,8 @@ router.post('/:house_id/join', function(req,res) {
       data: {
               'venmo_id': req.session.venmo_id,
               'password': req.param('password')
-            }
+            },
+      headers: headers
     }
   )
   .on('complete', function(data) {
@@ -91,7 +97,8 @@ router.post('/:house_id/expenses', function(req,res) {
             'venmo_id': req.session.venmo_id,
             'amount_string': req.param('amount_string'),
             'note': req.param('note')
-          }
+          },
+    headers: headers
   })
   .on('complete', function(data) {
     res.json(data);

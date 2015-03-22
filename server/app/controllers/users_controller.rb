@@ -51,7 +51,7 @@ class UsersController < ApplicationController
     end
   end
 
-  private
+  protected
 
   def permit_params
     params.permit(:code, :id, :search)
