@@ -81,5 +81,4 @@ test:
 production:
   <<: *default
   database: roomies_production
-  username: roomies
-  password: <%= ENV['ROOMIES_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
