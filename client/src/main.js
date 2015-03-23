@@ -69,6 +69,7 @@
       var data = this.state.data;
       return (
         <div className="roomiesApp">
+          <NewHouseModal user={data.user} onCreateHouse={this.loadUserFromServer} />
           <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} onChange={this.loadUserFromServer} />
           <UserHouses houses={data.user.houses} />
         </div>
@@ -125,7 +126,6 @@
               <ul className="nav navbar-nav navbar-right">
                 <li>
                   <a href="#" onClick={this.showNewHouseModal}>New house</a>
-                  <NewHouseModal user={user} onCreateHouse={this.props.onChange} />
                 </li>
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle user-icon" data-toggle="dropdown" role="button" aria-expanded="false">

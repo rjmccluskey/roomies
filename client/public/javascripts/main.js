@@ -69,6 +69,7 @@
       var data = this.state.data;
       return (
         React.createElement("div", {className: "roomiesApp"}, 
+          React.createElement(NewHouseModal, {user: data.user, onCreateHouse: this.loadUserFromServer}), 
           React.createElement(NavBar, {user: data.user, searchedUsers: data.searchedUsers, onSearchUsers: this.searchUsersFromServer, onChange: this.loadUserFromServer}), 
           React.createElement(UserHouses, {houses: data.user.houses})
         )
@@ -124,8 +125,7 @@
               ), 
               React.createElement("ul", {className: "nav navbar-nav navbar-right"}, 
                 React.createElement("li", null, 
-                  React.createElement("a", {href: "#", onClick: this.showNewHouseModal}, "New house"), 
-                  React.createElement(NewHouseModal, {user: user, onCreateHouse: this.props.onChange})
+                  React.createElement("a", {href: "#", onClick: this.showNewHouseModal}, "New house")
                 ), 
                 React.createElement("li", {className: "dropdown"}, 
                   React.createElement("a", {href: "#", className: "dropdown-toggle user-icon", "data-toggle": "dropdown", role: "button", "aria-expanded": "false"}, 
