@@ -67,9 +67,15 @@
     },
     render: function() {
       var data = this.state.data;
+      var searchedUserModalNodes = data.searchedUsers.map(function(searchedUser) {
+        return (
+          React.createElement(SearchedUserModal, {searchedUser: searchedUser, user: data.user, onJoinHouse: this.loadUserFromServer, key: searchedUser.id})
+        );
+      });
       return (
         React.createElement("div", {className: "roomiesApp"}, 
           React.createElement(NewHouseModal, {user: data.user, onCreateHouse: this.loadUserFromServer}), 
+          searchedUserModalNodes, 
           React.createElement(NavBar, {user: data.user, searchedUsers: data.searchedUsers, onSearchUsers: this.searchUsersFromServer, onChange: this.loadUserFromServer}), 
           React.createElement(UserHouses, {houses: data.user.houses})
         )
@@ -178,13 +184,10 @@
       var user = this.props.user;
       var searchedUser = this.props.searchedUser;
       return (
-        React.createElement("div", {className: "searched-user"}, 
-          React.createElement("form", {onSubmit: this.showModal}, 
-            React.createElement("button", {type: "submit", className: "btn btn-default btn-block", "data-toggle": "modal", "data-target": "searched-user-modal" + searchedUser.id}, 
-              React.createElement("img", {className: "pull-left", src: searchedUser.profile_picture_url}), React.createElement("h4", null, searchedUser.first_name)
-            )
-          ), 
-          React.createElement(SearchedUserModal, {searchedUser: searchedUser, user: user, onJoinHouse: this.props.onJoinHouse})
+        React.createElement("form", {onSubmit: this.showModal}, 
+          React.createElement("button", {type: "submit", className: "btn btn-default btn-block", "data-toggle": "modal", "data-target": "searched-user-modal" + searchedUser.id}, 
+            React.createElement("img", {className: "pull-left", src: searchedUser.profile_picture_url}), React.createElement("h4", null, searchedUser.first_name)
+          )
         )
       );
     }

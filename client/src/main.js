@@ -67,9 +67,15 @@
     },
     render: function() {
       var data = this.state.data;
+      var searchedUserModalNodes = data.searchedUsers.map(function(searchedUser) {
+        return (
+          <SearchedUserModal searchedUser={searchedUser} user={data.user} onJoinHouse={this.loadUserFromServer} key={searchedUser.id} />
+        );
+      });
       return (
         <div className="roomiesApp">
           <NewHouseModal user={data.user} onCreateHouse={this.loadUserFromServer} />
+          {searchedUserModalNodes}
           <NavBar user={data.user} searchedUsers={data.searchedUsers} onSearchUsers={this.searchUsersFromServer} onChange={this.loadUserFromServer} />
           <UserHouses houses={data.user.houses} />
         </div>
@@ -178,14 +184,11 @@
       var user = this.props.user;
       var searchedUser = this.props.searchedUser;
       return (
-        <div className="searched-user" >
-          <form onSubmit={this.showModal}>
-            <button type="submit" className="btn btn-default btn-block" data-toggle="modal" data-target={"searched-user-modal" + searchedUser.id}>
-              <img className="pull-left" src={searchedUser.profile_picture_url} /><h4>{searchedUser.first_name}</h4>
-            </button>
-          </form>
-          <SearchedUserModal searchedUser={searchedUser} user={user} onJoinHouse={this.props.onJoinHouse} />
-        </div>
+        <form onSubmit={this.showModal}>
+          <button type="submit" className="btn btn-default btn-block" data-toggle="modal" data-target={"searched-user-modal" + searchedUser.id}>
+            <img className="pull-left" src={searchedUser.profile_picture_url} /><h4>{searchedUser.first_name}</h4>
+          </button>
+        </form>
       );
     }
   });
