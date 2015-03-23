@@ -1,7 +1,4 @@
 class UsersController < ApplicationController
-  include JSONFormatting
-
-  before_filter :cors_set_access_control_headers
 
   def create
     venmo = Venmo::Oauth.new(permit_params[:code])
@@ -54,7 +51,7 @@ class UsersController < ApplicationController
   protected
 
   def permit_params
-    params.permit(:code, :id, :search)
+    params.permit(:code, :id, :search, :token)
   end
 
 end

@@ -1,7 +1,4 @@
 class HousesController < ApplicationController
-  include JSONFormatting
-
-  before_filter :cors_set_access_control_headers
 
   def create
     @house = House.create name: permit_params[:name],
@@ -54,6 +51,6 @@ class HousesController < ApplicationController
   protected
 
   def permit_params
-    params.permit(:id, :house_id, :venmo_id, :name, :password, :password_confirmation)
+    params.permit(:id, :house_id, :venmo_id, :name, :password, :password_confirmation, :token)
   end
 end

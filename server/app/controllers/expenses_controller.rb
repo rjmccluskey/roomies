@@ -1,8 +1,4 @@
 class ExpensesController < ApplicationController
-  include JSONFormatting
-
-  before_filter :cors_set_access_control_headers
-
   def create
     house_id      = permit_params[:house_id]
     venmo_id      = permit_params[:venmo_id]
@@ -50,6 +46,6 @@ class ExpensesController < ApplicationController
   protected
 
   def permit_params
-    params.permit(:amount_string, :venmo_id, :house_id, :note)
+    params.permit(:amount_string, :venmo_id, :house_id, :note, :token)
   end
 end
