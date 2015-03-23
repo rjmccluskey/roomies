@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var rest = require('restler');
 var token = process.env.ROOMIES_SECRET;
+var routeHelper = require('../helpers/routeHelper');
 
 router.get('/venmo_oauth', function(req, res) {
   var code = req.query.code;

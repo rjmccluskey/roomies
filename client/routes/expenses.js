@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var rest = require('restler');
 var token = process.env.ROOMIES_SECRET;
+var routeHelper = require('../helpers/routeHelper');
 
 /* Add a new expense */
 router.post('/', function(req,res) {
@@ -16,14 +17,7 @@ router.post('/', function(req,res) {
           }
   })
   .on('complete', function(data) {
-    if (data.errors) {
-      req.flash('errors', data.errors)
-      res.json(data);
-    }
-    else {
-      req.flash('expense', 'Expense added!')
-      res.json(data);
-    }
+    res.json(data);
   });
 });
 

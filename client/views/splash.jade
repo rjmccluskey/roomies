@@ -4,7 +4,3 @@ block content
   h1= title
   p Welcome to #{title}
   a(href="#{oauth_url}") Connect with Venmo!
-
-  if messages.venmo_error
-    p Oops! Looks like there was a problem with Venmo:
-    p= messages.venmo_error

@@ -1,6 +1,5 @@
 var express = require('express');
 var session = require('express-session');
-var flash = require('express-flash');
 var methodOverride = require('method-override')
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -36,7 +35,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(flash());
 
 app.use('/', routes);
 app.use('/users', users);
@@ -52,27 +50,27 @@ app.use(function(req, res, next) {
 
 // error handlers
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
+// // development error handler
+// // will print stacktrace
+// if (app.get('env') === 'development') {
+//     app.use(function(err, req, res, next) {
+//         res.status(err.status || 500);
+//         res.render('error', {
+//             message: err.message,
+//             error: err
+//         });
+//     });
+// }
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
+// // production error handler
+// // no stacktraces leaked to user
+// app.use(function(err, req, res, next) {
+//     res.status(err.status || 500);
+//     res.render('error', {
+//         message: err.message,
+//         error: {}
+//     });
+// });
 
 
 module.exports = app;
