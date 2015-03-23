@@ -14,7 +14,6 @@ router.get('/venmo_oauth', function(req, res) {
       })
       .on('complete', function(data) {
         if (data.error) {
-          req.flash('venmo_error', data.error);
           res.redirect('/');
         }
         else {
