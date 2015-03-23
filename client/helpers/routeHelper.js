@@ -19,17 +19,33 @@ var routeHelper = {
       };
     });
   },
-  post: function() {
-
+  post: function(router, url, params, prefix, needsVenmoId) {
+    router.post(url, function(req, res) {
+      if (req.session.venmo_id) {
+        rest
+          .post(apiURI + '/' + prefix + addParamstoURL(url, req), {
+            data: getData(params, req, needsVenmoId)
+          })
+          .on('complete', function(data) {
+            res.json(data);
+          });
+      }
+      else {
+        res.redirect('/')
+      }
+    });
   }
 };
 
-var getData = function(params, req) {
+var getData = function(params, req, needsVenmoId) {
   var data = {'token': token};
   for (var i = 0; i < params.length; i++) {
     var param = params[i];
     data[param] = req.param(param);
   };
+  if (needsVenmoId) {
+    data.venmo_id = req.session.venmo_id;
+  }
   return data;
 };
 

@@ -14,21 +14,6 @@ router.get('/', function(req, res) {
   }
 });
 
-// router.get('/search', function(req,res) {
-//   if (req.session.venmo_id) {
-//     rest
-//       .get('http://localhost:3000/users/search', {
-//         data: {search: req.param('search'), 'token': token}
-//       })
-//       .on('complete', function(data) {
-//         res.json(data);
-//       });
-//   }
-//   else {
-//     res.redirect('/')
-//   }
-// });
-
 routeHelper.get(router, '/search', ['search'], 'users');
 
 router.get('/logout', function(req, res) {
