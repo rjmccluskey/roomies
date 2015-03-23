@@ -1,6 +1,6 @@
 var rest = require('restler');
 var token = process.env.ROOMIES_SECRET;
-var apiURI = 'https://roomie-api.herokuapp.com';
+var apiURI = process.env.API_URI || 'http://localhost:3000';
 
 var routeHelper = {
   get: function(router, url, params, prefix) {
