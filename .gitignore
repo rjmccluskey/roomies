@@ -19,3 +19,4 @@
 /client/node_modules/
 /client/.env
 /client/public/libs
+/client/public/javascripts/.module-cache/
