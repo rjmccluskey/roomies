@@ -1,21 +1,22 @@
 var express = require('express');
 var router = express.Router();
 var rest = require('restler');
+var token = process.env.ROOMIES_SECRET;
 
 router.get('/venmo_oauth', function(req, res) {
   var code = req.query.code;
 
   if (code) {
     rest
-      .post('http://localhost:3000/users',
-        { data: {'code': code} })
+      .post('http://localhost:3000/users', {
+          data: {'code': code, 'token': token}
+      })
       .on('complete', function(data) {
         if (data.error) {
           req.flash('venmo_error', data.error);
           res.redirect('/');
         }
         else {
-
           req.session.venmo_id = data.user.venmo_id;
           res.redirect('/');
         }
@@ -23,7 +24,7 @@ router.get('/venmo_oauth', function(req, res) {
   }
   else {
     res.redirect('/');
-  }
+  };
 });
 
 router.get('/', function(req,res) {
@@ -31,7 +32,9 @@ router.get('/', function(req,res) {
 
   if (venmo_id) {
     rest
-      .get('http://localhost:3000/users/' + venmo_id)
+      .get('http://localhost:3000/users/' + venmo_id, {
+        data: {'token': token}
+      })
       .on('complete', function(data) {
         if (data.error) {
           res.redirect('/')
