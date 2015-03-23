@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var rest = require('restler');
 var token = process.env.ROOMIES_SECRET;
+var apiURI = process.env.API_URI || 'http://localhost:3000';
 var routeHelper = require('../helpers/routeHelper');
 
 router.get('/venmo_oauth', function(req, res) {
@@ -9,7 +10,7 @@ router.get('/venmo_oauth', function(req, res) {
 
   if (code) {
     rest
-      .post('https://roomie-api.herokuapp.com/users', {
+      .post(apiURI + '/users', {
           data: {'code': code, 'token': token}
       })
       .on('complete', function(data) {
@@ -32,7 +33,7 @@ router.get('/', function(req,res) {
 
   if (venmo_id) {
     rest
-      .get('https://roomie-api.herokuapp.com/users/' + venmo_id, {
+      .get(apiURI + '/users/' + venmo_id, {
         data: {'token': token}
       })
       .on('complete', function(data) {
