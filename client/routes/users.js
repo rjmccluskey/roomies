@@ -9,7 +9,7 @@ router.get('/venmo_oauth', function(req, res) {
 
   if (code) {
     rest
-      .post('http://localhost:3000/users', {
+      .post('https://roomie-api.herokuapp.com/users', {
           data: {'code': code, 'token': token}
       })
       .on('complete', function(data) {
@@ -32,7 +32,7 @@ router.get('/', function(req,res) {
 
   if (venmo_id) {
     rest
-      .get('http://localhost:3000/users/' + venmo_id, {
+      .get('https://roomie-api.herokuapp.com/users/' + venmo_id, {
         data: {'token': token}
       })
       .on('complete', function(data) {
