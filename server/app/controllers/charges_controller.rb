@@ -5,7 +5,9 @@ class ChargesController < ApplicationController
 
   def update_status
     p "============================"
-    p permit_params[:data]
+    p JSON.parse(permit_params[:data])
+    p "============================"
+    p permit_params[:type]
     p "============================"
   end
 
