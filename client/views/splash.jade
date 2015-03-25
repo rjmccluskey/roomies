@@ -4,15 +4,3 @@ block content
   h1= title
   p Welcome to #{title}
   a(href="#{oauth_url}") Connect with Venmo!
-
-  script(type="text/javascript").
-    $.ajax({
-      url: "/wakeup",
-      type: "GET",
-      dataType: 'json',
-      success: function(data) {
-      },
-      error: function(xhr, status, err) {
-        console.error("/wakeup", status, err.toString());
-      }
-    });
