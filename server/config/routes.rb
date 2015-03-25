@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   get 'charges/webhook' => 'charges#verify_webhook'
   post 'charges/webhook' => 'charges#update_status'
 
+  get 'wakeup' => 'wakeup#wake'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
