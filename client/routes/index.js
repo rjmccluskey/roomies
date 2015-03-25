@@ -4,7 +4,17 @@ var rest = require('restler');
 var routeHelper = require('../helpers/routeHelper');
 var clientId = process.env.ROOMIES_CLIENT_ID;
 var apiURI = process.env.API_URI || 'http://localhost:3000';
+var clientURI = process.env.CLIENT_URI || 'http://localhost:3001'
 var token = process.env.ROOMIES_SECRET;
+
+router.get('*', function(req, res, next) {
+  if (clientURI !== 'http://localhost:3001' && req.headers['x-forwarded-proto'] !== 'https') {
+    res.redirect(clientURI + req.url);
+  }
+  else {
+    next();
+  }
+});
 
 router.get('/', function(req, res) {
   if (req.session.venmo_id) {
