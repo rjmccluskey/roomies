@@ -71,7 +71,7 @@
         return (
           <SearchedUserModal searchedUser={searchedUser} user={data.user} onJoinHouse={this.loadUserFromServer} key={searchedUser.id} />
         );
-      });
+      }.bind(this));
       return (
         <div className="roomiesApp">
           <NewHouseModal user={data.user} onCreateHouse={this.loadUserFromServer} />
@@ -252,6 +252,64 @@
     }
   });
 
+  var JoinHouseForm = React.createClass({
+    getInitialState: function() {
+      return {error: ""};
+    },
+    handleSubmit: function(e) {
+      e.preventDefault();
+      var house = this.props.house;
+      var url = "/houses/" + house.id + "/join";
+      var $btn = $("#join-house-btn" + house.id).button('loading');
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        type: 'POST',
+        data: {password: this.refs.password.getDOMNode().value.trim()},
+        success: function(data) {
+          console.log(data);
+          if (data.house) {
+            this.props.onSuccessfulJoin(house.id);
+          }
+          else if (data.error) {
+            this.setState({error: data.error});
+          }
+          $btn.button("reset");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+          $btn.button("reset");
+        }.bind(this)
+      });
+      this.refs.password.getDOMNode().value = "";
+    },
+    render: function() {
+      var house = this.props.house;
+      var error = this.state.error;
+      var hasError;
+      var errorNode;
+      if (error) {
+        hasError = true;
+        errorNode = <p className="text-danger">{error}</p>;
+      }
+      var cx = React.addons.classSet;
+      var classes = cx({
+        "form-group": true,
+        "has-error": hasError
+      });
+      return (
+        <form className="form-inline" onSubmit={this.handleSubmit}>
+          <div className={classes}>
+            <label className="sr-only" htmlFor="house-password">Password</label>
+            <input type="password" className="form-control" id="house-password" placeholder="Enter password" ref="password" />
+          </div>
+          <button type="submit" id={"join-house-btn" + house.id} className="btn btn-default">Join house</button>
+          {errorNode}
+        </form>
+      );
+    }
+  });
+
   var NewHouseModal = React.createClass({
     resetForm: function() {
       this.refs.name.getDOMNode().value = '';
@@ -373,62 +431,6 @@
     }
   });
 
-  var JoinHouseForm = React.createClass({
-    getInitialState: function() {
-      return {error: ""};
-    },
-    handleSubmit: function(e) {
-      e.preventDefault();
-      var house = this.props.house;
-      var url = "/houses/" + house.id + "/join";
-      var $btn = $("#join-house-btn" + house.id).button('loading');
-      $.ajax({
-        url: url,
-        dataType: 'json',
-        type: 'POST',
-        data: {password: this.refs.password.getDOMNode().value.trim()},
-        success: function(data) {
-          if (data.house) {
-            this.props.onSuccessfulJoin(house.id);
-          }
-          else if (data.error) {
-            this.setState({error: data.error});
-          }
-          $btn.button("reset");
-        }.bind(this),
-        error: function(xhr, status, err) {
-          console.error(url, status, err.toString());
-          $btn.button("reset");
-        }.bind(this)
-      });
-      this.refs.password.getDOMNode().value = "";
-    },
-    render: function() {
-      var house = this.props.house;
-      var error = this.state.error;
-      var hasError;
-      var errorNode;
-      if (error) {
-        hasError = true;
-        errorNode = <p className="text-danger">{error}</p>;
-      }
-      var cx = React.addons.classSet;
-      var classes = cx({
-        "form-group": true,
-        "has-error": hasError
-      });
-      return (
-        <form className="form-inline" onSubmit={this.handleSubmit}>
-          <div className={classes}>
-            <label className="sr-only" htmlFor="house-password">Password</label>
-            <input type="password" className="form-control" id="house-password" placeholder="Enter password" ref="password" />
-          </div>
-          <button type="submit" id={"join-house-btn" + house.id} className="btn btn-default">Join house</button>
-          {errorNode}
-        </form>
-      );
-    }
-  });
 
   var UserHouses = React.createClass({
     render: function() {
