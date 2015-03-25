@@ -7,6 +7,37 @@ img {
   height: 50px;
 }
 
+.big-img {
+  width: 20em;
+  height: 20em;
+}
+
+#header {
+  background-color: black;
+  height: 65em;
+}
+
+.header {
+  color: white;
+  margin: 2.5em 0 2.5em 0;
+}
+
+.venmo-img {
+  margin: 0 0 0.15em 1em;
+  width: 4.22em;
+  height: 0.8em;
+}
+
+.venmo-btn {
+  background-color: #3D95CE;
+  color: white;
+  border: none;
+}
+
+.venmo-btn:hover {
+  color: #3D95CE;
+}
+
 .roomiesApp {
   margin-top: 80px;
 }
@@ -17,6 +48,10 @@ img {
 
 .medium-padding {
   padding: 15px 0 15px 0;
+}
+
+.medium-margin {
+  margin: 15px 0 15px 0;
 }
 
 .medium-margin-left {
