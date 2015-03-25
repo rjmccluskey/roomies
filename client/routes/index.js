@@ -7,13 +7,11 @@ var apiURI = process.env.API_URI || 'http://localhost:3000';
 var token = process.env.ROOMIES_SECRET;
 
 router.get('/', function(req, res) {
-  var venmo_id = req.session.venmo_id
-
-  if (venmo_id) {
+  if (req.session.venmo_id) {
     res.render('index');
   }
   else {
-    res.render('splash', { title: 'Roomies', oauth_url: 'https://api.venmo.com/v1/oauth/authorize?client_id=' + clientId + '&scope=make_payments%20access_profile%20access_email%20access_phone&response_type=code' });
+    res.render('splash', { oauth_url: 'https://api.venmo.com/v1/oauth/authorize?client_id=' + clientId + '&scope=make_payments%20access_profile%20access_email%20access_phone&response_type=code' });
   }
 });
 

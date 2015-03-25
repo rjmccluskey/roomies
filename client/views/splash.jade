@@ -1,6 +1,25 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  a(href="#{oauth_url}") Connect with Venmo!
+  section#header
+    .container-fluid
+      .row.header
+        img.big-img.center-block(src="images/roomies-logo-inverse.png")
+        h1.text-center <em>WELCOME TO ROOMIES</em>
+      .row
+        .col-md-4.no-padding
+        .col-md-4.no-padding
+          a.btn.btn-default.venmo-btn.btn-block(href="#{oauth_url}")
+            h3.medium-margin Connect with
+              img.venmo-img(src="images/venmo-logowhite.png")
+        .col-md-4.no-padding
+
+  script(type="text/javascript").
+    $(".venmo-btn").hover(
+      function() {
+        $(".venmo-img").attr("src", "images/venmo-logoblue.png")
+      },
+      function() {
+        $(".venmo-img").attr("src", "images/venmo-logowhite.png")
+      }
+    );
