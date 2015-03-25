@@ -14,20 +14,4 @@ block content
               img.venmo-img(src="images/venmo-logowhite.png")
         .col-md-4.no-padding
 
-  script(type="text/javascript").
-    $(".venmo-btn").hover(
-      function() {
-        $(".venmo-img").attr("src", "images/venmo-logoblue.png")
-      },
-      function() {
-        $(".venmo-img").attr("src", "images/venmo-logowhite.png")
-      }
-    );
-
-    $('#header').css('width', $(window).width());
-    $('#header').css('height', $(window).height());
-
-    $(window).resize(function() {
-      $('#header').css('width', $(window).width());
-      $('#header').css('height', $(window).height());
-    });
+  script(type="text/javascript" src="javascripts/splash.js")

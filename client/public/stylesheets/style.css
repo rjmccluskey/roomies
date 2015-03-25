@@ -36,7 +36,8 @@ img {
 }
 
 .venmo-btn:hover {
-  color: #3D95CE;
+  color: white;
+  background-color: #3786B9;
 }
 
 .roomiesApp {
