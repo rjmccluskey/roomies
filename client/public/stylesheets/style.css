@@ -10,12 +10,13 @@ img {
 .big-img {
   width: 25%;
   height: auto;
-  min-width: 15em;
+  min-width: 12em;
+  max-width: 20em;
 }
 
 #header {
   background-color: black;
-  height: 65em;
+  min-height: 37.5em;
 }
 
 .header {
