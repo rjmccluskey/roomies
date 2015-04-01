@@ -532,6 +532,10 @@
     },
     componentDidMount: function() {
       this.loadHouseFromServer();
+      var _this = this;
+      setInterval(function() {
+        _this.loadExpensesFromServer();
+      }, 3000);
     },
     render: function() {
       var house = this.props.house;
